@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "noImplicitAny": true,
+    "module": "es6",
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "Node",
+    "sourceMap": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "jsx": "react",
+    "checkJs": false,
+    "experimentalDecorators": true,
+    "lib": ["ES2017", "DOM", "ES2018","ES2020","ES2019","ES2021","ESNext"],
+    "target": "ES6",
+    "downlevelIteration": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "skipLibCheck": true,
+    "types": ["node"],
+    "typeRoots": ["node_modules/@types", "customTypings"],
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "rootDir": ".",
+  }
+}
