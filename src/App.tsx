@@ -1,20 +1,28 @@
-import React, { FC } from 'react'
+import { ChakraProvider } from '@chakra-ui/react'
+import React, { FC, useState } from 'react'
+import { BrowserRouter } from 'react-router-dom'
 
-import { Flex, ChakraProvider, Text, Heading } from '@chakra-ui/react'
-
-import { theme } from './themes/themes'
+import AppRoutes from './AppRoutes'
+import FDVStack from './components/CustomChakraComponents/FDVStack'
+import NavigationDrawer from './components/Navigation/NavigationDrawer'
 import ErrorBoundary from './ErrorBoundry'
+import { DataProvider } from './Providers/DataProvider'
+import { theme } from './themes/themes'
 
 const App: FC = () => {
   return (
-    <ErrorBoundary>
-      <ChakraProvider theme={theme}>
-        <Flex background="accentColor">
-          <Text variant="secondary">Hello</Text>
-          <Heading>Hello</Heading>
-        </Flex>
-      </ChakraProvider>
-    </ErrorBoundary>
+    <BrowserRouter>
+      <ErrorBoundary>
+        <ChakraProvider theme={theme}>
+          <DataProvider>
+            <NavigationDrawer />
+            <FDVStack p="20px" pt="100px" h="100%" overflow={'scroll'}>
+              <AppRoutes />
+            </FDVStack>
+          </DataProvider>
+        </ChakraProvider>
+      </ErrorBoundary>
+    </BrowserRouter>
   )
 }
 

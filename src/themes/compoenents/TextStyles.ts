@@ -1,8 +1,7 @@
 export const TextStyles = {
   baseStyle: {
     fontFamily: 'primaryFont',
-    fontSize: '32px',
-    fontWeight: 600,
+    fontWeight: 500,
   },
   sizes: {
     xs: {

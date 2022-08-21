@@ -1,5 +1,7 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const webpack = require('webpack')
+
 module.exports = {
   entry: './src/index.tsx',
   output: {
@@ -7,7 +9,8 @@ module.exports = {
     filename: 'bundle.js',
   },
   devServer: {
-    port: 8080,
+    port: 3000,
+    historyApiFallback: true,
   },
 
   resolve: {
@@ -28,8 +31,12 @@ module.exports = {
     ],
   },
   plugins: [
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+      'process.env.REACT_APP_LOCAL': JSON.stringify(process.env.REACT_APP_LOCAL || 'True'),
+    }),
     new HtmlWebpackPlugin({
       template: path.join(__dirname, '/src/index.html'),
     }),
   ],
-};
+}

@@ -6,19 +6,19 @@ export const HeadingStyles = {
   },
   sizes: {
     xs: {
-      fontSize: '20px',
+      fontSize: '12px',
     },
     sm: {
-      fontSize: '24px',
+      fontSize: '14px',
     },
     md: {
-      fontSize: '32px',
+      fontSize: '16px',
     },
     lg: {
-      fontSize: '40px',
+      fontSize: '20px',
     },
     xl: {
-      fontSize: '48px',
+      fontSize: '24px',
     },
   },
   variants: {
