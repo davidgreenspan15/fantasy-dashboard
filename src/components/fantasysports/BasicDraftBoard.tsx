@@ -17,15 +17,21 @@ import {
   Tr,
   useDisclosure,
 } from '@chakra-ui/react'
-import { clone, cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash'
 import React, { FC, useEffect, useMemo, useState } from 'react'
-import { PlayerResponse } from 'src/types/getDraftBoardResponse'
 
 import useAxios from '../../hooks/axiosHook'
 import { NormalizedPlayerResponse } from '../../types/getDraftBoardResponse'
 import FDVStack from '../CustomChakraComponents/FDVStack'
+import { useCallback } from 'react'
 
 const BasicDraftBoard: FC = () => {
+  const [{ data, loading, error }, getData] = useAxios<{ players: NormalizedPlayerResponse[] }>(
+    'http://localhost:8000/getDraftBoard',
+    'get',
+    false,
+  )
+
   const [columnDictionary, setColumnDictionary] = useState<Record<string, { value?: string; sort?: string }>>({})
   const [limit, setLimit] = useState(50)
   const [columnFilter, setColumnFilter] = useState(false)
@@ -34,23 +40,19 @@ const BasicDraftBoard: FC = () => {
   const [sortSettings, setSortSettings] = useState<
     { column: string; dir: 'up' | 'down'; isNumeric: boolean } | undefined
   >()
-  const [{ data, loading, error }, getData] = useAxios<{ players: PlayerResponse[] }>(
-    'http://localhost:8000/getDraftBoard',
-    'get',
-  )
-  const players: NormalizedPlayerResponse[] | undefined = useMemo(() => {
+  const players = useCallback(() => {
     if (data && !loading) {
-      return normalizedPlayers(data.players)
+      return data.players
     }
   }, [data, loading])
   const filteredList = useMemo(() => {
     if (players) {
-      let newPlayers = players
+      let newPlayers = players()
       Object.keys(columnDictionary).forEach((key) => {
         if (key === 'global') {
-          newPlayers = globalFilter(newPlayers, columnDictionary[key].value ?? '')
+          newPlayers = globalFilter(newPlayers ?? [], columnDictionary[key].value ?? '')
         } else {
-          newPlayers = filterBy(newPlayers, key, columnDictionary[key].value ?? '')
+          newPlayers = filterBy(newPlayers ?? [], key, columnDictionary[key].value ?? '')
         }
       })
       return newPlayers
@@ -72,17 +74,17 @@ const BasicDraftBoard: FC = () => {
       if (includeTotalStats) {
         return columns
       } else {
-        return columns.filter((c) => !c.key.includes('total'))
+        return columns.filter((c) => !c.label?.includes('TOTAL'))
       }
     }
     if (includeTotalStats) {
       if (includeAvgStats) {
         return columns
       } else {
-        return columns.filter((c) => !c.key.includes('avg'))
+        return columns.filter((c) => !c.label?.includes('AVG'))
       }
     }
-    return columns.filter((c) => !c.key.includes('avg') && !c.key.includes('total'))
+    return columns.filter((c) => !c.label?.includes('AVG') && !c.label?.includes('TOTAL'))
   }, [columns, includeAvgStats, includeTotalStats])
 
   return (
@@ -142,6 +144,7 @@ const BasicDraftBoard: FC = () => {
                           h="auto"
                           w="auto"
                           variant="flushed"
+                          value={columnDictionary[c.key]?.value ?? ''}
                           onChange={(e) => {
                             const dictionaryClone = cloneDeep(columnDictionary)
                             dictionaryClone[c.key] = { value: e.target.value }
@@ -169,24 +172,6 @@ const BasicDraftBoard: FC = () => {
   )
 }
 export default BasicDraftBoard
-
-const normalizedPlayers = (players?: PlayerResponse[]) => {
-  return players?.reduce((acc, p) => {
-    delete p.player?.pos
-    let normalizedPlayer: any = {
-      ...p,
-      ...p.player,
-      teamName: p.player?.team['name'] ?? '' + p.player?.team['city'] ?? '',
-      teamImgSrc: p.player?.team['imgSrc'],
-      playerDepthPosition: p.player?.playerDepthPosition ? p.player?.playerDepthPosition.join(', ') : undefined,
-    }
-    delete normalizedPlayer['player']
-    delete normalizedPlayer['team']
-
-    acc.push(normalizedPlayer as NormalizedPlayerResponse)
-    return acc
-  }, [] as NormalizedPlayerResponse[])
-}
 
 const filterBy = (players: NormalizedPlayerResponse[], key: string, value: string) => {
   return players.filter((p) => {
@@ -255,8 +240,9 @@ const columns: {
 }[] = [
   { key: 'playerImageSrc', label: '', columnFilter: false, isImage: true, canSort: false },
   { key: 'rank', columnFilter: true, isNumeric: true, canSort: true },
-  { key: 'avgAdp', label: 'ADP', columnFilter: true, canSort: true },
   { key: 'playerName', label: 'Name', columnFilter: true, canSort: true },
+  { key: 'avgAdp', label: 'ADP', columnFilter: true, canSort: true },
+  { key: 'getRoundAndPick', label: 'Round & Pick', columnFilter: true, canSort: true },
   { key: 'pos', label: 'position', columnFilter: true, canSort: true },
   { key: 'playerDepthPosition', label: 'Depth Position', columnFilter: true, canSort: true },
   { key: 'depth', label: 'depth', columnFilter: true, isNumeric: true, canSort: true },
@@ -285,6 +271,7 @@ const columns: {
   { key: 'experience', label: 'experience', columnFilter: true, canSort: true },
   { key: 'number', label: 'number', columnFilter: true, isNumeric: true, canSort: true },
   { key: 'teamName', label: 'Team', columnFilter: true, canSort: true },
+  { key: 'drafted', label: 'Drafted', columnFilter: true, canSort: true },
 ]
 
 const PlayerRow: FC<{
@@ -309,9 +296,25 @@ const PlayerRow: FC<{
               </Td>
             )
           }
+          if (c.key === 'drafted') {
+            return (
+              <Td key={i} px={0} py={0} position="initial" zIndex={1} right="1px">
+                <Button colorScheme="red" variant="outline" w="100%" backgroundColor={'white'}>
+                  Drafted
+                </Button>
+              </Td>
+            )
+          }
           return (
             <Td py={1} px={4} minWidth="100px" w="min-content" key={i}>
-              {c.isImage ? <Image src={value} height="40px" /> : value}
+              {c.isImage ? (
+                <Image
+                  src={value !== '-' ? value : 'https://a.espncdn.com/combiner/i?img=/i/headshots/nophoto.png'}
+                  height="40px"
+                />
+              ) : (
+                value
+              )}
             </Td>
           )
         })}

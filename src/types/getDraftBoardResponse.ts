@@ -1,74 +1,36 @@
-export interface PlayerResponse {
-  id: string
-  playerId: null | string
-  rank: number
-  playerName: string
-  teamAbr: string
-  pos: string
-  byeWeek: number | null
-  strengthOgSchedule: string
-  avgAdp: string
-  notes: string
-  avgFanPoints: number
-  avgPassingYds: number
-  avgPassingTds: number
-  avgReceivingRec: number
-  avgReceivingYds: number
-  avgReceivingTds: number
-  avgRushingAtt: number
-  avgRushingYds: number
-  avgRushingTds: number
-  totalFanPoints: number
-  totalPassingYds: number
-  totalPassingTds: number
-  totalReceivingRec: number
-  totalReceivingYds: number
-  totalReceivingTds: number
-  totalRushingAtt: number
-  totalRushingYds: number
-  totalRushingTds: number
-  createdAt: string
-  updatedAt: null
-  player?: Player | null
-  experience: string | null
-}
-
 export interface NormalizedPlayerResponse {
   id: string
   playerId: null | string
-  rank: number
+  rank?: number
   playerName: string
   teamAbr: string
   pos: string
   byeWeek: number | null
-  strengthOgSchedule: string
-  avgAdp: string
-  notes: string
-  avgFanPoints: number
-  avgPassingYds: number
-  avgPassingTds: number
-  avgReceivingRec: number
-  avgReceivingYds: number
-  avgReceivingTds: number
-  avgRushingAtt: number
-  avgRushingYds: number
-  avgRushingTds: number
-  totalFanPoints: number
-  totalPassingYds: number
-  totalPassingTds: number
-  totalReceivingRec: number
-  totalReceivingYds: number
-  totalReceivingTds: number
-  totalRushingAtt: number
-  totalRushingYds: number
-  totalRushingTds: number
-  createdAt: string
-  updatedAt: null
+  strengthOgSchedule?: string
+  avgAdp?: string
+  notes?: string
+  avgFanPoints?: number
+  avgPassingYds?: number
+  avgPassingTds?: number
+  avgReceivingRec?: number
+  avgReceivingYds?: number
+  avgReceivingTds?: number
+  avgRushingAtt?: number
+  avgRushingYds?: number
+  avgRushingTds?: number
+  totalFanPoints?: number
+  totalPassingYds?: number
+  totalPassingTds?: number
+  totalReceivingRec?: number
+  totalReceivingYds?: number
+  totalReceivingTds?: number
+  totalRushingAtt?: number
+  totalRushingYds?: number
+  totalRushingTds?: number
   name: string
   injuryStatus: InjuryStatus | null
   depth: number | null
   positionGroup: PositionGroup | null
-  wrSet: number | null
   playerDepthPosition: string
   playerImageSrc: string
   height: Height | null
@@ -77,21 +39,7 @@ export interface NormalizedPlayerResponse {
   teamName?: string | null
   teamImgSrc?: string | null
   experience: string | null
-}
-
-export interface Player {
-  name: string
-  injuryStatus: InjuryStatus | null
-  pos?: PlayerDepthPosition | null
-  depth: number | null
-  positionGroup: PositionGroup | null
-  wrSet: number | null
-  playerDepthPosition: PlayerDepthPosition[]
-  playerImageSrc: string
-  height: Height | null
-  weight: null | string
-  number: null | string
-  team: { [key: string]: null | string }
+  getRoundAndPick?: string | null
 }
 
 export enum Height {
@@ -119,17 +67,6 @@ export enum InjuryStatus {
   O = 'O',
   Q = 'Q',
   Susp = 'SUSP',
-}
-
-export enum PlayerDepthPosition {
-  Fb = 'FB',
-  Kr = 'KR',
-  PR = 'PR',
-  Pk = 'PK',
-  Qb = 'QB',
-  Rb = 'RB',
-  Te = 'TE',
-  Wr = 'WR',
 }
 
 export enum PositionGroup {

@@ -1,14 +1,30 @@
 import axios from 'axios'
 import React, { useCallback, useEffect, useState } from 'react'
-const useAxios: <T>(
+export type CallFn<T> = (
   url: string,
   method: string,
   params?: any,
-) => {
-  loading: boolean
+) => Promise<{
   data: T
-  error: Error | undefined
-}[] = (url: string, method: string, params?: any) => {
+}>
+
+export type CallResult<T> = {
+  // response data
+  data?: T
+  // response error
+  error?: Error | undefined
+  // whether the request is loading
+  loading: boolean
+}
+
+export type useAxiosResults<T> = [CallResult<T>, CallFn<T>]
+
+const useAxios: <T>(url: string, method: string, lazy: boolean, params?: any) => useAxiosResults<T> = (
+  url: string,
+  method: string,
+  lazy: boolean,
+  params?: any,
+) => {
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState<any>()
   const [error, setError] = useState<Error>()
@@ -22,8 +38,8 @@ const useAxios: <T>(
     }
     try {
       const resp = await axios.request({ url, method, data: params })
-      setData(resp.data)
-      return resp
+      setData(resp.data as any)
+      return { data: resp.data }
     } catch (err: any) {
       console.error(err)
       setError(err)
@@ -33,12 +49,12 @@ const useAxios: <T>(
     }
   }, [])
   useEffect(() => {
-    if (!url || !method || loading) {
+    if (!url || !method || lazy || loading) {
       return
     }
-    getData(url, method, params)
-  }, [method, params, url])
-
-  return [{ loading, data, error }]
+    getData(url, method, params).catch((err) => void 0)
+  }, [method, url])
+  const x = [{ loading, data, error }, getData]
+  return x as useAxiosResults<any>
 }
 export default useAxios
