@@ -118,9 +118,6 @@ const TableBody: FC<{
     setLoadingMore(false)
   }, [limitedPlayers, setLoadingMore])
 
-  useEffect(() => {
-    console.debug({ draftedDictionary })
-  }, [draftedDictionary])
   return (
     <Tbody>
       {limitedPlayers?.map((p, idx) => {

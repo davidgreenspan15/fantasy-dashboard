@@ -35,7 +35,7 @@ const useAxios: <T>(
   params?: unknown
 ) => {
   const [loading, setLoading] = useState(false)
-  const [data, setData] = useState<unknown>()
+  const [data, setData] = useState<unknown>(undefined)
   const [error, setError] = useState<Error>()
 
   const getData = useCallback(
@@ -61,12 +61,11 @@ const useAxios: <T>(
     [error, loading]
   )
   useEffect(() => {
-    if (!url || !method || lazy || loading || skip || data) {
+    if (!url || !method || lazy || loading || skip || data || error) {
       return
     }
-
     getData(url, method, params).catch(() => void 0)
-  }, [data, getData, lazy, loading, method, params, skip, url])
+  }, [data, getData, lazy, loading, method, params, skip, url, error])
   const x = [{ loading, data, error }, getData]
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return x as useAxiosResults<any>

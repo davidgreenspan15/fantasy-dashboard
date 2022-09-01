@@ -12,7 +12,6 @@ const TeamsList: FC = () => {
       return l.abr === leagueName
     })
   }, [leagueName, leagueResponse])
-  console.debug({ league })
   return (
     <FDVStack>
       {league?.teams?.map((t, idx) => {
