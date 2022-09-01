@@ -1,17 +1,18 @@
-import { Button, useQuery } from '@chakra-ui/react'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 
+import { useSearchParams } from 'react-router-dom'
+import { Player } from 'src/types/Players'
+
+import { Button } from '@chakra-ui/react'
+
+import { useData } from '../Providers/DataProvider'
 import FDVStack from './CustomChakraComponents/FDVStack'
 import PlayerCard from './PlayerCard'
-import { Player } from 'src/types/Players'
-import { useData } from '../Providers/DataProvider'
-import { useLocation } from 'react-router'
-import { useSearchParams } from 'react-router-dom'
 
 const PlayersList: FC = () => {
   const { league: leagueName, leagueResponse } = useData()
 
-  let [searchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
 
   const teamID = searchParams.get('team')
   const [players, setPlayers] = useState<Player[]>([])
@@ -30,7 +31,7 @@ const PlayersList: FC = () => {
   }
   useEffect(() => {
     if (league) {
-      let ps: Player[] = []
+      const ps: Player[] = []
 
       const team = league.teams.find((t) => t.id === teamID)
       if (team) {

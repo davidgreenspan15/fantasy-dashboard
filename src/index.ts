@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import express from 'express'
 
 // const password = process.env.SECRET_KEY;
@@ -8,7 +9,10 @@ app.use(function (req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', '*')
 
   // Request methods you wish to allow
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'GET, POST, OPTIONS, PUT, PATCH, DELETE'
+  )
 
   // Request headers you wish to allow
   res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,Content-Type')
@@ -30,15 +34,19 @@ app.listen(PORT, () => {
 const handleLoginFull = () => {
   const code = location.href.includes('=') ? location.href.split('=')[1] : null
 
-  let requestBody = {
-    client_id: 'dj0yJmk9Nfgdg1VYYlhZV0FXbXdjJmQ9WVdrOVYxVlNVV2RzUjBvbWNHbzlNQT09JnM9Y29uc3VtZXJzZWNyZXQmc3Y9MCZ4PWQ1',
+  const requestBody = {
+    client_id:
+      'dj0yJmk9Nfgdg1VYYlhZV0FXbXdjJmQ9WVdrOVYxVlNVV2RzUjBvbWNHbzlNQT09JnM9Y29uc3VtZXJzZWNyZXQmc3Y9MCZ4PWQ1',
     client_secret: '9aaa50e61add7e133c8802ef411e27fa16cceb30',
     redirect_uri: 'https://localhost:8080/',
     code: code,
     grant_type: 'authorization_code',
   }
-  let data = Object.keys(requestBody)
-    .map((key) => encodeURIComponent(key) + '=' + encodeURIComponent(requestBody[key]))
+  const data = Object.keys(requestBody)
+    .map(
+      (key) =>
+        encodeURIComponent(key) + '=' + encodeURIComponent(requestBody[key])
+    )
     .join('&')
 
   fetch('https://api.login.yahoo.com/oauth2/get_token', {

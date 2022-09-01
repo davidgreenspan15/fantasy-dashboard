@@ -1,6 +1,7 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const webpack = require('webpack')
+const ESLintPlugin = require('eslint-webpack-plugin')
 
 module.exports = {
   entry: './src/index.tsx',
@@ -11,6 +12,12 @@ module.exports = {
   devServer: {
     port: 3000,
     historyApiFallback: true,
+    client: {
+      overlay: {
+        errors: true,
+        warnings: false,
+      },
+    },
   },
 
   resolve: {
@@ -32,11 +39,19 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
-      'process.env.REACT_APP_LOCAL': JSON.stringify(process.env.REACT_APP_LOCAL || 'True'),
+      'process.env.NODE_ENV': JSON.stringify(
+        process.env.NODE_ENV || 'development'
+      ),
+      'process.env.REACT_APP_LOCAL': JSON.stringify(
+        process.env.REACT_APP_LOCAL || 'True'
+      ),
     }),
     new HtmlWebpackPlugin({
       template: path.join(__dirname, '/src/index.html'),
+    }),
+    new ESLintPlugin({
+      extensions: ['js', 'jsx', 'ts', 'tsx'],
+      failOnWarning: false,
     }),
   ],
 }

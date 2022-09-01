@@ -1,6 +1,19 @@
-import { Button, Flex, Heading, HStack, Image, Spinner, Tbody, Td, Text, Tr, useDisclosure } from '@chakra-ui/react'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
+
 import { cloneDeep } from 'lodash'
-import React, { FC, useMemo, useCallback, useEffect, useState } from 'react'
+
+import {
+  Button,
+  Flex,
+  Heading,
+  HStack,
+  Image,
+  Tbody,
+  Td,
+  Text,
+  Tr,
+  useDisclosure,
+} from '@chakra-ui/react'
 
 import { NormalizedPlayerResponse } from '../../types/getDraftBoardResponse'
 import { columns } from './columns'
@@ -9,23 +22,42 @@ export type ColumnDictionary = Record<string, { value?: string; sort?: string }>
 
 const TableBody: FC<{
   columnDictionary: ColumnDictionary
-  sortSettings: { column: string; dir: 'up' | 'down'; isNumeric: boolean } | undefined
+  sortSettings:
+    | { column: string; dir: 'up' | 'down'; isNumeric: boolean }
+    | undefined
   includeAvgStats: boolean
   includeTotalStats: boolean
   showDrafted: boolean
   players: NormalizedPlayerResponse[]
   setLoadingMore: (loadMore: boolean) => void
-}> = ({ columnDictionary, sortSettings, includeAvgStats, includeTotalStats, players, showDrafted, setLoadingMore }) => {
+}> = ({
+  columnDictionary,
+  sortSettings,
+  includeAvgStats,
+  includeTotalStats,
+  players,
+  showDrafted,
+  setLoadingMore,
+}) => {
   const [limit, setLimit] = useState(50)
-  const [draftedDictionary, setDraftedDictionary] = useState<Record<string, boolean>>({})
+  const [draftedDictionary, setDraftedDictionary] = useState<
+    Record<string, boolean>
+  >({})
   const filteredList = useMemo(() => {
     if (players) {
       let newPlayers = players
       Object.keys(columnDictionary).forEach((key) => {
         if (key === 'global') {
-          newPlayers = globalFilter(newPlayers ?? [], columnDictionary[key].value ?? '')
+          newPlayers = globalFilter(
+            newPlayers ?? [],
+            columnDictionary[key].value ?? ''
+          )
         } else {
-          newPlayers = filterBy(newPlayers ?? [], key, columnDictionary[key].value ?? '')
+          newPlayers = filterBy(
+            newPlayers ?? [],
+            key,
+            columnDictionary[key].value ?? ''
+          )
         }
       })
       return newPlayers
@@ -38,7 +70,6 @@ const TableBody: FC<{
 
   const limitedPlayers = useMemo(() => {
     if (sortedPlayers) {
-      setLoadingMore(false)
       return sortedPlayers.slice(0, limit)
     }
   }, [sortedPlayers, limit])
@@ -58,11 +89,15 @@ const TableBody: FC<{
         return columns.filter((c) => !c.label?.includes('AVG'))
       }
     }
-    return columns.filter((c) => !c.label?.includes('AVG') && !c.label?.includes('TOTAL'))
-  }, [columns, includeAvgStats, includeTotalStats])
+    return columns.filter(
+      (c) => !c.label?.includes('AVG') && !c.label?.includes('TOTAL')
+    )
+  }, [includeAvgStats, includeTotalStats])
 
   const handleScroll = useCallback(() => {
-    const windowValue = Math.round(window.innerHeight + document.documentElement.scrollTop)
+    const windowValue = Math.round(
+      window.innerHeight + document.documentElement.scrollTop
+    )
     const tableValue = Math.round(document.documentElement.offsetHeight)
     if (
       (filteredList?.length ?? 0) > (limitedPlayers?.length ?? 0) &&
@@ -72,12 +107,16 @@ const TableBody: FC<{
       setLoadingMore(true)
       setLimit(limit + 50)
     }
-  }, [filteredList, limitedPlayers])
+  }, [filteredList?.length, limit, limitedPlayers?.length, setLoadingMore])
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [handleScroll])
+
+  useEffect(() => {
+    setLoadingMore(false)
+  }, [limitedPlayers, setLoadingMore])
 
   useEffect(() => {
     console.debug({ draftedDictionary })
@@ -102,7 +141,11 @@ const TableBody: FC<{
 }
 export default TableBody
 
-const filterBy = (players: NormalizedPlayerResponse[], key: string, value: string) => {
+const filterBy = (
+  players: NormalizedPlayerResponse[],
+  key: string,
+  value: string
+) => {
   return players.filter((p) => {
     if (p) return `${p[key]}`.toLowerCase().includes(value.toLowerCase())
   })
@@ -123,7 +166,7 @@ const globalFilter = (players: NormalizedPlayerResponse[], value: string) => {
 }
 const sortRows = (
   rows?: NormalizedPlayerResponse[],
-  sortSettings?: { column: string; dir: 'up' | 'down'; isNumeric: boolean },
+  sortSettings?: { column: string; dir: 'up' | 'down'; isNumeric: boolean }
 ) => {
   const rowsClone = cloneDeep(rows)
   if (sortSettings) {
@@ -161,7 +204,12 @@ const sortRows = (
 
 const PlayerRow: FC<{
   player: NormalizedPlayerResponse
-  columns: { key: string; label?: string; columnFilter: boolean; isImage?: boolean }[]
+  columns: {
+    key: string
+    label?: string
+    columnFilter: boolean
+    isImage?: boolean
+  }[]
   draftDictionary: Record<string, boolean>
   setDraftDictionary: (draftDictionary: Record<string, boolean>) => void
 }> = ({ player, columns, draftDictionary, setDraftDictionary }) => {
@@ -226,7 +274,11 @@ const PlayerRow: FC<{
             <Td py={1} px={4} minWidth="100px" w="min-content" key={i}>
               {c.isImage ? (
                 <Image
-                  src={value !== '-' ? value : 'https://a.espncdn.com/combiner/i?img=/i/headshots/nophoto.png'}
+                  src={
+                    value !== '-'
+                      ? value
+                      : 'https://a.espncdn.com/combiner/i?img=/i/headshots/nophoto.png'
+                  }
                   height="40px"
                 />
               ) : (
@@ -242,7 +294,13 @@ const PlayerRow: FC<{
       <Tr hidden={!isOpen}>
         <Td colSpan={columns.length} background="#dddddd !important">
           <Flex pl="30px">
-            <Text size="sm" fontWeight={'400'} maxW={'80vw'} wordBreak="break-word" whiteSpace={'break-spaces'}>
+            <Text
+              size="sm"
+              fontWeight={'400'}
+              maxW={'80vw'}
+              wordBreak="break-word"
+              whiteSpace={'break-spaces'}
+            >
               {player.notes}
             </Text>
           </Flex>

@@ -1,6 +1,8 @@
-import { HStack, Input, Switch, Text } from '@chakra-ui/react'
+import React, { FC } from 'react'
+
 import { cloneDeep } from 'lodash'
-import React, { FC, useState } from 'react'
+
+import { HStack, Input, Switch, Text } from '@chakra-ui/react'
 
 import FDVStack from '../CustomChakraComponents/FDVStack'
 import { ColumnDictionary } from './BasicDraftBoard'
@@ -30,10 +32,18 @@ const DraftBoardHeaders: FC<{
 }) => {
   return (
     <FDVStack>
-      <Switch onChange={() => setColumnFilter(!columnFilter)}>Column Filters</Switch>
-      <Switch onChange={() => setIncludeAvgStats(!includeAvgStats)}>Avg Stats</Switch>
-      <Switch onChange={() => setIncludeTotalStats(!includeTotalStats)}>Total Stats</Switch>
-      <Switch onChange={() => setShowDrafted(!showDrafted)}>Show Drafted</Switch>
+      <Switch onChange={() => setColumnFilter(!columnFilter)}>
+        Column Filters
+      </Switch>
+      <Switch onChange={() => setIncludeAvgStats(!includeAvgStats)}>
+        Avg Stats
+      </Switch>
+      <Switch onChange={() => setIncludeTotalStats(!includeTotalStats)}>
+        Total Stats
+      </Switch>
+      <Switch onChange={() => setShowDrafted(!showDrafted)}>
+        Show Drafted
+      </Switch>
 
       <HStack alignItems={'flex-end'}>
         <Text>Search</Text>

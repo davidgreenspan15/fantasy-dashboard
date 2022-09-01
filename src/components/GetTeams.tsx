@@ -1,8 +1,9 @@
-import { Button, Flex } from '@chakra-ui/react'
-import axios from 'axios'
 import React, { FC } from 'react'
-import { useEffect } from 'react'
+
+import axios from 'axios'
 import { Leagues } from 'src/types/LeagueResponse'
+
+import { Button, Flex } from '@chakra-ui/react'
 
 import { useData } from '../Providers/DataProvider'
 

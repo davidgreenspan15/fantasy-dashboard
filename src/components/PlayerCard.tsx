@@ -1,8 +1,9 @@
-import { HStack, Image, Text } from '@chakra-ui/react'
 import React, { FC } from 'react'
 
-import FDVStack from './CustomChakraComponents/FDVStack'
+import { HStack, Image, Text } from '@chakra-ui/react'
+
 import { InjuryStatus, Player } from '../types/Players'
+import FDVStack from './CustomChakraComponents/FDVStack'
 
 const PlayerCard: FC<{ player: Player }> = ({ player }) => {
   const haStatus = player.injuryStatus !== InjuryStatus.Empty

@@ -1,6 +1,7 @@
-import { extendTheme, VStack } from '@chakra-ui/react'
-import { TextStyles } from './compoenents/TextStyles'
+import { extendTheme } from '@chakra-ui/react'
+
 import { HeadingStyles } from './compoenents/HeadingStyles'
+import { TextStyles } from './compoenents/TextStyles'
 import { VStackStyle } from './compoenents/VStackStyles'
 
 export const theme = extendTheme({

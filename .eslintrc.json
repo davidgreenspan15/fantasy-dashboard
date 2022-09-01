@@ -1,16 +1,53 @@
 {
+  "env": { "browser": true, "es2021": true },
   "extends": [
+    "plugin:react/recommended",
+    "prettier",
     "eslint:recommended",
-    "plugin:@react/recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended",
-    "prettier/@typescript-eslint"
+    "plugin:react-hooks/recommended"
   ],
+  "ignorePatterns": ["node_modules", "dist", "webpack.*", "*.js"],
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint", "prettier","react"],
+  "parserOptions": { "ecmaFeatures": { "jsx": true, "impliedStrict": true } },
+  "plugins": [
+    "@typescript-eslint",
+    "prettier",
+    "react",
+    "eslint-plugin-import"
+  ],
   "rules": {
     "prettier/prettier": "error",
-    "@typescript-eslint/no-unused-vars": "error",
-    "@typescript-eslint/no-explicit-any": "error"
+    "@typescript-eslint/no-empty-function": 1,
+    "no-duplicate-imports": 2,
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      { "vars": "all", "args": "after-used", "ignoreRestSiblings": false }
+    ],
+    "import/order": [
+      2,
+      {
+        "groups": ["builtin", "external", "internal"],
+        "pathGroups": [
+          {
+            "pattern": "react",
+            "group": "external",
+            "position": "before"
+          },
+          {
+            "pattern": "@chakra-ui/react",
+            "group": "internal",
+            "position": "before"
+          }
+        ],
+        "pathGroupsExcludedImportTypes": ["react", "@chakra-ui/react"],
+        "newlines-between": "always",
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        }
+      }
+    ]
   }
 }

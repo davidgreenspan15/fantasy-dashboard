@@ -1,6 +1,8 @@
-import { ChakraProvider } from '@chakra-ui/react'
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
+
 import { BrowserRouter } from 'react-router-dom'
+
+import { ChakraProvider } from '@chakra-ui/react'
 
 import AppRoutes from './AppRoutes'
 import FDVStack from './components/CustomChakraComponents/FDVStack'

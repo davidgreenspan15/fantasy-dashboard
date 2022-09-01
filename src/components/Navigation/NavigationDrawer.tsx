@@ -1,3 +1,5 @@
+import React, { FC } from 'react'
+
 import {
   Button,
   Drawer,
@@ -12,7 +14,7 @@ import {
   Select,
   useDisclosure,
 } from '@chakra-ui/react'
-import React, { ChangeEvent, FC } from 'react'
+
 import { useData } from '../../Providers/DataProvider'
 import FDVStack from '../CustomChakraComponents/FDVStack'
 import GetTeams from '../GetTeams'
@@ -21,16 +23,36 @@ import NavigationRouteOptions from './NavigationRouteOptions'
 const NavigationDrawer: FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { league, setLeague, leagueResponse } = useData()
-  const routes = ['teams', 'depth-charts', 'rosters', 'players', 'fantasy-draft-board', 'sql-tool']
+  const routes = [
+    'teams',
+    'depth-charts',
+    'rosters',
+    'players',
+    'fantasy-draft-board',
+    'sql-tool',
+  ]
   return (
-    <Flex w="100%" boxShadow={'1px 1px #DDDDDD'} position="fixed" py="10px" background="white" zIndex={2}>
+    <Flex
+      w="100%"
+      boxShadow={'1px 1px #DDDDDD'}
+      position="fixed"
+      py="10px"
+      background="white"
+      zIndex={2}
+    >
       <HStack w="100%" justifyContent={'space-between'} pr="20px">
-        <Flex boxSize={'50px'} as={Button} rounded={'full'} onClick={onOpen} ml="10px">
+        <Flex
+          boxSize={'50px'}
+          as={Button}
+          rounded={'full'}
+          onClick={onOpen}
+          ml="10px"
+        >
           RG
         </Flex>
         <Select
           value={league}
-          onChange={(e: any) => {
+          onChange={(e) => {
             setLeague(e.target.value)
           }}
           width="150px"

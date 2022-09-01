@@ -1,8 +1,8 @@
 import React, { FC, useMemo } from 'react'
-import FDVStack from './CustomChakraComponents/FDVStack'
+
 import { useData } from '../Providers/DataProvider'
+import FDVStack from './CustomChakraComponents/FDVStack'
 import TeamCard from './TeamCard'
-import { Leagues, LeaguesResponse } from 'src/types/LeagueResponse'
 
 const TeamsList: FC = () => {
   const { league: leagueName, leagueResponse } = useData()

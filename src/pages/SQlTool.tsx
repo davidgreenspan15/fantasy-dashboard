@@ -1,14 +1,16 @@
-import { Button, Input } from '@chakra-ui/react'
-import React, { DetailedHTMLProps, FC, FormHTMLAttributes, useEffect, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import React, { FC, useState } from 'react'
+
 import axios from 'axios'
+
+import { Button, Input } from '@chakra-ui/react'
+
 import FDVStack from '../components/CustomChakraComponents/FDVStack'
-import SQlTable from '..//components/SQlTable'
+import SQlTable from '../components/SQlTable'
 
 const SQLTool: FC = () => {
   const [response, setResponse] = useState()
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     sendQuery(e.target[0].value as string)
   }
@@ -20,7 +22,7 @@ const SQLTool: FC = () => {
         {
           method: 'post',
           headers: { 'Content-Type': 'application/json' },
-        },
+        }
       )
       .then((resp) => {
         console.debug(resp)
@@ -32,7 +34,7 @@ const SQLTool: FC = () => {
     <FDVStack>
       <form onSubmit={handleSubmit}>
         <FDVStack>
-          <Input id="query" name="query" onChange={(e) => {}} />
+          <Input id="query" name="query" />
           <Button type="submit">Submit</Button>
         </FDVStack>
       </form>

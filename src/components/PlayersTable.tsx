@@ -1,31 +1,30 @@
-import {
-  Button,
-  Table,
-  Thead,
-  Tbody,
-  Text,
-  Tr,
-  Th,
-  Td,
-  TableCaption,
-  TableContainer,
-  Image,
-  HStack,
-  Heading,
-} from '@chakra-ui/react'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 
-import FDVStack from './CustomChakraComponents/FDVStack'
-import PlayerCard from './PlayerCard'
-import { InjuryStatus, Player } from 'src/types/Players'
-import { useData } from '../Providers/DataProvider'
-import { useLocation } from 'react-router'
 import { useSearchParams } from 'react-router-dom'
+import { Player } from 'src/types/Players'
+
+import {
+  Button,
+  Heading,
+  HStack,
+  Image,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
+} from '@chakra-ui/react'
+
+import { useData } from '../Providers/DataProvider'
+import FDVStack from './CustomChakraComponents/FDVStack'
 
 const PlayersTable: FC = () => {
   const { league: leagueName, leagueResponse } = useData()
 
-  let [searchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
 
   const teamID = searchParams.get('team')
   const [players, setPlayers] = useState<Player[]>([])
@@ -44,7 +43,7 @@ const PlayersTable: FC = () => {
   }
   useEffect(() => {
     if (league) {
-      let ps: Player[] = []
+      const ps: Player[] = []
 
       const team = league.teams.find((t) => t.id === teamID)
       if (team) {
@@ -103,7 +102,9 @@ const PlayersTable: FC = () => {
           </Tbody>
         </Table>
       </TableContainer>
-      {players.length > 0 ? <Button onClick={loadMore}>Load More</Button> : null}
+      {players.length > 0 ? (
+        <Button onClick={loadMore}>Load More</Button>
+      ) : null}
     </FDVStack>
   )
 }

@@ -1,5 +1,14 @@
-import { Flex, Table, TableContainer, Tfoot, Spinner } from '@chakra-ui/react'
 import React, { FC, useMemo, useState } from 'react'
+
+import {
+  Flex,
+  Spinner,
+  Table,
+  TableContainer,
+  Td,
+  Tfoot,
+  Tr,
+} from '@chakra-ui/react'
 
 import useAxios from '../../hooks/axiosHook'
 import { NormalizedPlayerResponse } from '../../types/getDraftBoardResponse'
@@ -14,7 +23,7 @@ const BasicDraftBoard: FC = () => {
   const [{ data, loading }] = useAxios<{ players: NormalizedPlayerResponse[] }>(
     'http://localhost:8000/getDraftBoard',
     'get',
-    false,
+    false
   )
 
   const [columnDictionary, setColumnDictionary] = useState<ColumnDictionary>({})
@@ -70,8 +79,10 @@ const BasicDraftBoard: FC = () => {
           />
           <Tfoot>
             {loadingMore ? (
-              <Flex pt="10px" position={'absolute'} left="50vw">
-                <Spinner />
+              <Flex pt="10px" position={'absolute'} left="50vw" as={Tr}>
+                <Flex as={Td}>
+                  <Spinner />
+                </Flex>
               </Flex>
             ) : null}
           </Tfoot>

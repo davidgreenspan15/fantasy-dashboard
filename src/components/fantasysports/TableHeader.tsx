@@ -1,7 +1,13 @@
-import { SmallAddIcon, TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons'
-import { Flex, Input, Th, Thead, Tr } from '@chakra-ui/react'
+import React, { FC, useMemo } from 'react'
+
+import {
+  SmallAddIcon,
+  TriangleDownIcon,
+  TriangleUpIcon,
+} from '@chakra-ui/icons'
 import { cloneDeep } from 'lodash'
-import React, { FC, useMemo, useState } from 'react'
+
+import { Flex, Input, Th, Thead, Tr } from '@chakra-ui/react'
 
 import { ColumnDictionary } from './BasicDraftBoard'
 import { columns } from './columns'
@@ -12,7 +18,9 @@ const TableHeader: FC<{
   columnFilter: boolean
   includeAvgStats: boolean
   includeTotalStats: boolean
-  sortSettings: { column: string; dir: 'up' | 'down'; isNumeric: boolean } | undefined
+  sortSettings:
+    | { column: string; dir: 'up' | 'down'; isNumeric: boolean }
+    | undefined
   setSortSettings: React.Dispatch<
     React.SetStateAction<
       | {
@@ -47,8 +55,10 @@ const TableHeader: FC<{
         return columns.filter((c) => !c.label?.includes('AVG'))
       }
     }
-    return columns.filter((c) => !c.label?.includes('AVG') && !c.label?.includes('TOTAL'))
-  }, [columns, includeAvgStats, includeTotalStats])
+    return columns.filter(
+      (c) => !c.label?.includes('AVG') && !c.label?.includes('TOTAL')
+    )
+  }, [includeAvgStats, includeTotalStats])
 
   return (
     <Thead>

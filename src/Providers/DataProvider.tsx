@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { PropsWithChildren, useState } from 'react'
-import { LeaguesResponse, League } from '../types/LeagueResponse'
-import useEffect from 'react'
+
+import { League } from '../types/LeagueResponse'
 
 type DataContextType = {
   leagueResponse?: League[]
@@ -22,7 +24,8 @@ export const DataProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [league, setLeague] = useState<string>('nfl')
   const value: DataContextType = {
     leagueResponse: leagueResponse,
-    setLeagueResponse: (leagueResponse: League[]) => setLeagueResponse(leagueResponse),
+    setLeagueResponse: (leagueResponse: League[]) =>
+      setLeagueResponse(leagueResponse),
     league: league,
     setLeague: (league: string) => setLeague(league),
   }

@@ -1,9 +1,11 @@
-import React, { FC, useMemo, useEffect, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
+
 import { useParams } from 'react-router-dom'
-import { useData } from '../Providers/DataProvider'
-import { Player } from '../types/Players'
+
 import FDVStack from '../components/CustomChakraComponents/FDVStack'
 import RosterTable from '../components/RosterTable'
+import { useData } from '../Providers/DataProvider'
+import { Player } from '../types/Players'
 
 const Roster: FC = () => {
   const { id } = useParams<{ id?: string }>()
@@ -18,7 +20,7 @@ const Roster: FC = () => {
 
   useEffect(() => {
     if (league) {
-      let ps: Record<string, Player[]> = {}
+      const ps: Record<string, Player[]> = {}
 
       const t = league.teams.find((t) => t.id === id)
       if (t) {
@@ -41,8 +43,8 @@ const Roster: FC = () => {
 
   return (
     <FDVStack>
-      {Object.keys(playerMap).map((k) => {
-        return <RosterTable ps={playerMap[k]} psGroup={k} />
+      {Object.keys(playerMap).map((k, idx) => {
+        return <RosterTable ps={playerMap[k]} psGroup={k} key={idx} />
       })}
     </FDVStack>
   )

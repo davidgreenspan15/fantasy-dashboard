@@ -1,12 +1,14 @@
 import React, { FC } from 'react'
+
 import { useRoutes } from 'react-router-dom'
+
+import BasicDraftBoard from './components/fantasysports/BasicDraftBoard'
 import HomePage from './pages/Home'
-import TeamsPage from './pages/Teams'
 import PlayersPage from './pages/Players'
-import SQLTool from './pages/SQlTool'
 import Roster from './pages/Roster'
 import RosterList from './pages/RosterList'
-import BasicDraftBoard from './components/fantasysports/BasicDraftBoard'
+import SQLTool from './pages/SQlTool'
+import TeamsPage from './pages/Teams'
 
 const AppRoutes: FC = () => {
   const routes = useRoutes([

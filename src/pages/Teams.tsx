@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 
-import { Flex, Text } from '@chakra-ui/react'
+import { Flex } from '@chakra-ui/react'
 
 import TeamsList from '../components/TeamsList'
 

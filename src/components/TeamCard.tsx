@@ -1,8 +1,11 @@
 import React, { FC } from 'react'
-import FDVStack from './CustomChakraComponents/FDVStack'
-import { HStack, Image, Link, Text } from '@chakra-ui/react'
-import { Team } from 'src/types/Teams'
+
 import { Link as RRLink } from 'react-router-dom'
+import { Team } from 'src/types/Teams'
+
+import { HStack, Image, Link, Text } from '@chakra-ui/react'
+
+import FDVStack from './CustomChakraComponents/FDVStack'
 
 const TeamCard: FC<{ team: Team }> = ({ team }) => {
   return (

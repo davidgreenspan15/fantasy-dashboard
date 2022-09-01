@@ -1,12 +1,24 @@
-import { Button, Table, TableCaption, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
-import { cloneDeep } from 'lodash'
 import React, { FC, useEffect, useMemo, useState } from 'react'
+
+import { cloneDeep } from 'lodash'
+
+import {
+  Button,
+  Table,
+  TableCaption,
+  TableContainer,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+} from '@chakra-ui/react'
 
 import FDVStack from './CustomChakraComponents/FDVStack'
 
-const SQlTable: FC<{ rs?: any[] }> = ({ rs }) => {
-  const [rows, setRows] = useState<any[]>([])
-  const [rowsLimit, setRowsLimit] = useState<any[]>([])
+const SQlTable: FC<{ rs?: Record<string, unknown>[] }> = ({ rs }) => {
+  const [rows, setRows] = useState<Record<string, unknown>[]>([])
+  const [rowsLimit, setRowsLimit] = useState<Record<string, unknown>[]>([])
 
   const loadMore = () => {
     const r = rows.splice(0, 50)
