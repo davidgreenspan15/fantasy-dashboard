@@ -40,6 +40,7 @@ export interface NormalizedPlayerResponse {
   teamImgSrc?: string | null
   experience: string | null
   getRoundAndPick?: string | null
+  drafted?: boolean
 }
 
 export enum Height {
