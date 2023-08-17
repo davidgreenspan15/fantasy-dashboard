@@ -1,25 +1,12 @@
 import React, { FC, useEffect, useMemo, useState } from 'react'
 
 import { useSearchParams } from 'react-router-dom'
+import { Column } from 'src/types/ColumnDictionary'
 import { Player } from 'src/types/Players'
-
-import {
-  Button,
-  Heading,
-  HStack,
-  Image,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
-  Text,
-  Th,
-  Thead,
-  Tr,
-} from '@chakra-ui/react'
 
 import { useData } from '../Providers/DataProvider'
 import FDVStack from './CustomChakraComponents/FDVStack'
+import FDVTable from './CustomChakraComponents/table/FDVTable'
 
 const PlayersTable: FC = () => {
   const { league: leagueName, leagueResponse } = useData()
@@ -28,7 +15,6 @@ const PlayersTable: FC = () => {
 
   const teamID = searchParams.get('team')
   const [players, setPlayers] = useState<Player[]>([])
-  const [playersLimit, setPlayersLimit] = useState<Player[]>([])
 
   const league = useMemo(() => {
     return leagueResponse?.find((l) => {
@@ -36,11 +22,6 @@ const PlayersTable: FC = () => {
     })
   }, [leagueName, leagueResponse])
 
-  const loadMore = () => {
-    const p = players.splice(0, 50)
-    setPlayersLimit([...playersLimit, ...p])
-    setPlayers(players)
-  }
   useEffect(() => {
     if (league) {
       const ps: Player[] = []
@@ -60,51 +41,61 @@ const PlayersTable: FC = () => {
         })
       }
 
-      const pl = [...ps.splice(0, 50)]
-      setPlayersLimit(pl)
       setPlayers(ps)
     }
   }, [league, teamID])
+
+  const columns: Column[] = [
+    {
+      key: 'playerImageSrc',
+      label: '',
+      columnFilter: false,
+      isImage: true,
+      canSort: false,
+      // sticky: 'left',
+      display: true,
+      type: 'string',
+    },
+    {
+      key: 'name',
+      label: 'Player',
+      columnFilter: true,
+      isImage: false,
+      canSort: true,
+      display: true,
+      type: 'string',
+    },
+    {
+      key: 'number',
+      label: 'Number',
+      columnFilter: true,
+      isImage: false,
+      canSort: true,
+      display: true,
+      type: 'number',
+    },
+    {
+      key: 'pos',
+      label: 'Position',
+      columnFilter: true,
+      isImage: false,
+      canSort: true,
+      display: true,
+      type: 'string',
+    },
+    {
+      key: 'positionGroup',
+      label: 'Position Group',
+      columnFilter: true,
+      isImage: false,
+      canSort: true,
+      display: true,
+      type: 'string',
+    },
+  ]
   return (
     <FDVStack>
-      <TableContainer>
-        <Table variant="simple">
-          <Thead>
-            <Tr>
-              <Th> </Th>
-              <Th p={0}>Player</Th>
-              <Th p={0}>Number</Th>
-              <Th p={0}>Position</Th>
-              <Th p={0}>Position Group</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {playersLimit.map((p, idx) => {
-              return (
-                <Tr key={idx}>
-                  <Td p={0} w="min-content">
-                    <Image src={p.playerImageSrc} height="40px" />
-                  </Td>
-                  <Td p={0}>
-                    <HStack>
-                      <Heading size="sm">{p.name}</Heading>
-                      <Text color="red" size="sm">
-                        {p.injuryStatus ? ` ${p.injuryStatus}` : null}
-                      </Text>
-                    </HStack>
-                  </Td>
-                  <Td p={0}>{p.number}</Td>
-                  <Td p={0}>{p.pos}</Td>
-                  <Td p={0}>{p.positionGroup}</Td>
-                </Tr>
-              )
-            })}
-          </Tbody>
-        </Table>
-      </TableContainer>
-      {players.length > 0 ? (
-        <Button onClick={loadMore}>Load More</Button>
-      ) : null}
+      <FDVTable rows={players ?? []} columns={columns} limit={200} />
     </FDVStack>
   )
 }

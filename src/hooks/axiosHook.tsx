@@ -1,45 +1,30 @@
 import { useCallback, useEffect, useState } from 'react'
 
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 
-export type CallFn<T> = (
-  url: string,
-  method: string,
+import { useAxiosResults } from '../types/useAxios'
+
+interface AxiosRequest {
+  path: string
+  method: string
+  lazy?: boolean
+  skip?: boolean
   params?: unknown
-) => Promise<{
-  data: T
-}>
-
-export type CallResult<T> = {
-  // response data
-  data?: T
-  // response error
-  error?: Error | undefined
-  // whether the request is loading
-  loading: boolean
 }
 
-export type useAxiosResults<T> = [CallResult<T>, CallFn<T>]
-
-const useAxios: <T>(
-  url: string,
-  method: string,
-  lazy: boolean,
-  skip?: boolean,
-  params?: unknown
-) => useAxiosResults<T> = (
-  url: string,
-  method: string,
-  lazy: boolean,
-  skip?: boolean,
-  params?: unknown
-) => {
+const useAxios: <T>(req: AxiosRequest) => useAxiosResults<T> = ({
+  path,
+  method,
+  lazy,
+  skip,
+  params,
+}) => {
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState<unknown>(undefined)
-  const [error, setError] = useState<Error>()
-
+  const [error, setError] = useState<AxiosError>()
+  const baseUrl = 'http://localhost:8000/'
   const getData = useCallback(
-    async (url: string, method: string, params?: unknown) => {
+    async (path: string, method: string, params?: unknown) => {
       if (!loading) {
         setLoading(true)
       }
@@ -47,12 +32,16 @@ const useAxios: <T>(
         setError(undefined)
       }
       try {
-        const resp = await axios.request({ url, method, data: params })
+        const resp = await axios.request({
+          url: baseUrl + path,
+          method,
+          data: params,
+        })
         setData(resp.data)
         return { data: resp.data }
       } catch (err) {
         console.error(err)
-        setError(err as Error)
+        setError(err as AxiosError)
         throw err
       } finally {
         setLoading(false)
@@ -61,11 +50,11 @@ const useAxios: <T>(
     [error, loading]
   )
   useEffect(() => {
-    if (!url || !method || lazy || loading || skip || data || error) {
+    if (!path || !method || lazy || loading || skip || data || error) {
       return
     }
-    getData(url, method, params).catch(() => void 0)
-  }, [data, getData, lazy, loading, method, params, skip, url, error])
+    getData(path, method, params).catch(() => void 0)
+  }, [data, getData, lazy, loading, method, params, skip, path, error])
   const x = [{ loading, data, error }, getData]
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return x as useAxiosResults<any>

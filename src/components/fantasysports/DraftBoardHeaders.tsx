@@ -4,8 +4,8 @@ import { cloneDeep } from 'lodash'
 
 import { HStack, Input, Switch, Text } from '@chakra-ui/react'
 
+import { ColumnDictionary } from '../../types/ColumnDictionary'
 import FDVStack from '../CustomChakraComponents/FDVStack'
-import { ColumnDictionary } from './BasicDraftBoard'
 
 const DraftBoardHeaders: FC<{
   columnDictionary: ColumnDictionary

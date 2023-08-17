@@ -9,7 +9,7 @@ import { cloneDeep } from 'lodash'
 
 import { Flex, Input, Th, Thead, Tr } from '@chakra-ui/react'
 
-import { ColumnDictionary } from './BasicDraftBoard'
+import { ColumnDictionary } from '../../types/ColumnDictionary'
 import { columns } from './columns'
 
 const TableHeader: FC<{
@@ -18,15 +18,13 @@ const TableHeader: FC<{
   columnFilter: boolean
   includeAvgStats: boolean
   includeTotalStats: boolean
-  sortSettings:
-    | { column: string; dir: 'up' | 'down'; isNumeric: boolean }
-    | undefined
+  sortSettings: { column: string; dir: 'up' | 'down'; type: string } | undefined
   setSortSettings: React.Dispatch<
     React.SetStateAction<
       | {
           column: string
           dir: 'up' | 'down'
-          isNumeric: boolean
+          type: string
         }
       | undefined
     >
@@ -73,7 +71,7 @@ const TableHeader: FC<{
                     sortSettings={sortSettings}
                     column={c.key}
                     setSortSettings={setSortSettings}
-                    isNumeric={!!c.isNumeric}
+                    type={c.type}
                   />
                 ) : null}
               </Flex>
@@ -109,26 +107,26 @@ const TableHeader: FC<{
 export default TableHeader
 
 const SortIcons: FC<{
-  sortSettings?: { column: string; dir: 'up' | 'down'; isNumeric: boolean }
+  sortSettings?: { column: string; dir: 'up' | 'down'; type: string }
   setSortSettings: React.Dispatch<
     React.SetStateAction<
       | {
           column: string
           dir: 'up' | 'down'
-          isNumeric: boolean
+          type: string
         }
       | undefined
     >
   >
   column: string
-  isNumeric: boolean
-}> = ({ sortSettings, column, setSortSettings, isNumeric }) => {
+  type: string
+}> = ({ sortSettings, column, setSortSettings, type }) => {
   if (sortSettings && sortSettings.column === column) {
     if (sortSettings.dir === 'up') {
       return (
         <TriangleUpIcon
           onClick={() => {
-            setSortSettings({ column, dir: 'down', isNumeric })
+            setSortSettings({ column, dir: 'down', type })
           }}
         />
       )
@@ -145,7 +143,7 @@ const SortIcons: FC<{
   return (
     <SmallAddIcon
       onClick={() => {
-        setSortSettings({ column, dir: 'up', isNumeric })
+        setSortSettings({ column, dir: 'up', type })
       }}
     />
   )

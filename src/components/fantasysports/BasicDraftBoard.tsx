@@ -11,19 +11,19 @@ import {
 } from '@chakra-ui/react'
 
 import useAxios from '../../hooks/axiosHook'
+import { ColumnDictionary } from '../../types/ColumnDictionary'
 import { NormalizedPlayerResponse } from '../../types/getDraftBoardResponse'
 import FDVStack from '../CustomChakraComponents/FDVStack'
 import DraftBoardHeaders from './DraftBoardHeaders'
 import TableBody from './TableBody'
 import TableHeader from './TableHeader'
 
-export type ColumnDictionary = Record<string, { value?: string; sort?: string }>
-
 const BasicDraftBoard: FC = () => {
   const [{ data, loading }] = useAxios<{ players: NormalizedPlayerResponse[] }>(
-    'http://localhost:8000/getDraftBoard',
-    'get',
-    false
+    {
+      path: 'getDraftBoard',
+      method: 'get',
+    }
   )
 
   const [columnDictionary, setColumnDictionary] = useState<ColumnDictionary>({})
@@ -34,7 +34,7 @@ const BasicDraftBoard: FC = () => {
   const [includeTotalStats, setIncludeTotalStats] = useState(false)
   const [showDrafted, setShowDrafted] = useState(false)
   const [sortSettings, setSortSettings] = useState<
-    { column: string; dir: 'up' | 'down'; isNumeric: boolean } | undefined
+    { column: string; dir: 'up' | 'down'; type: string } | undefined
   >()
   const players = useMemo(() => {
     setLoadingMore(true)

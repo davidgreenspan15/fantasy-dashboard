@@ -8,6 +8,7 @@ import {
   Heading,
   HStack,
   Image,
+  TableCellProps,
   Tbody,
   Td,
   Text,
@@ -22,9 +23,7 @@ export type ColumnDictionary = Record<string, { value?: string; sort?: string }>
 
 const TableBody: FC<{
   columnDictionary: ColumnDictionary
-  sortSettings:
-    | { column: string; dir: 'up' | 'down'; isNumeric: boolean }
-    | undefined
+  sortSettings: { column: string; dir: 'up' | 'down'; type: string } | undefined
   includeAvgStats: boolean
   includeTotalStats: boolean
   showDrafted: boolean
@@ -39,7 +38,7 @@ const TableBody: FC<{
   showDrafted,
   setLoadingMore,
 }) => {
-  const [limit, setLimit] = useState(50)
+  const [limit, setLimit] = useState(100)
   const [draftedDictionary, setDraftedDictionary] = useState<
     Record<string, boolean>
   >({})
@@ -47,18 +46,10 @@ const TableBody: FC<{
     if (players) {
       let newPlayers = players
       Object.keys(columnDictionary).forEach((key) => {
-        if (key === 'global') {
-          newPlayers = globalFilter(
-            newPlayers ?? [],
-            columnDictionary[key].value ?? ''
-          )
-        } else {
-          newPlayers = filterBy(
-            newPlayers ?? [],
-            key,
-            columnDictionary[key].value ?? ''
-          )
-        }
+        newPlayers =
+          key === 'global'
+            ? globalFilter(newPlayers ?? [], columnDictionary[key].value ?? '')
+            : filterBy(newPlayers ?? [], key, columnDictionary[key].value ?? '')
       })
       return newPlayers
     }
@@ -76,18 +67,14 @@ const TableBody: FC<{
 
   const filteredColumns = useMemo(() => {
     if (includeAvgStats) {
-      if (includeTotalStats) {
-        return columns
-      } else {
-        return columns.filter((c) => !c.label?.includes('TOTAL'))
-      }
+      return includeTotalStats
+        ? columns
+        : columns.filter((c) => !c.label?.includes('TOTAL'))
     }
     if (includeTotalStats) {
-      if (includeAvgStats) {
-        return columns
-      } else {
-        return columns.filter((c) => !c.label?.includes('AVG'))
-      }
+      return includeAvgStats
+        ? columns
+        : columns.filter((c) => !c.label?.includes('AVG'))
     }
     return columns.filter(
       (c) => !c.label?.includes('AVG') && !c.label?.includes('TOTAL')
@@ -138,17 +125,17 @@ const TableBody: FC<{
 }
 export default TableBody
 
-const filterBy = (
+function filterBy(
   players: NormalizedPlayerResponse[],
   key: string,
   value: string
-) => {
+) {
   return players.filter((p) => {
     if (p) return `${p[key]}`.toLowerCase().includes(value.toLowerCase())
   })
 }
 
-const globalFilter = (players: NormalizedPlayerResponse[], value: string) => {
+function globalFilter(players: NormalizedPlayerResponse[], value: string) {
   return players.filter((p) => {
     let returnPlayer = false
     Object.values(p).forEach((p) => {
@@ -161,20 +148,21 @@ const globalFilter = (players: NormalizedPlayerResponse[], value: string) => {
     return returnPlayer
   })
 }
-const sortRows = (
+function sortRows(
   rows?: NormalizedPlayerResponse[],
-  sortSettings?: { column: string; dir: 'up' | 'down'; isNumeric: boolean }
-) => {
+  sortSettings?: { column: string; dir: 'up' | 'down'; type: string }
+): NormalizedPlayerResponse[] | undefined {
   const rowsClone = cloneDeep(rows)
   if (sortSettings) {
-    if (sortSettings.isNumeric) {
+    if (sortSettings.type === 'number') {
       return rowsClone?.sort(function (a, b) {
         if (sortSettings.dir === 'up') {
           return a[sortSettings.column] - b[sortSettings.column]
         }
         return b[sortSettings.column] - a[sortSettings.column]
       })
-    } else {
+    }
+    if (sortSettings.type === 'string') {
       return rowsClone?.sort(function (a, b) {
         if (sortSettings.dir === 'up') {
           if (a[sortSettings.column] < b[sortSettings.column]) {
@@ -206,6 +194,7 @@ const PlayerRow: FC<{
     label?: string
     columnFilter: boolean
     isImage?: boolean
+    sticky?: string
   }[]
   draftDictionary: Record<string, boolean>
   setDraftDictionary: (draftDictionary: Record<string, boolean>) => void
@@ -221,14 +210,44 @@ const PlayerRow: FC<{
       setDraftDictionary(clone)
     }
   }
+
+  function stickyProps(c: {
+    key: string
+    label?: string
+    columnFilter: boolean
+    isImage?: boolean
+    sticky?: string
+  }): TableCellProps | null {
+    if (!c.sticky) {
+      return null
+    }
+    const props: TableCellProps = {
+      px: 0,
+      py: 0,
+      position: 'sticky',
+      zIndex: 1,
+      background: 'blue.100 !important',
+      borderRadius: 0,
+      transform: 'scale(1.02)',
+      boxShadow: '-20px 0px 0px 20px #2c5282',
+    }
+    if (c.sticky === 'left') {
+      props['left'] = '0px'
+    }
+    if (c.sticky === 'right') {
+      props['right'] = '0px'
+    }
+    return props
+  }
   return (
     <>
       <Tr opacity={draftDictionary[player.id] ? 0.3 : 1}>
         {columns.map((c, i) => {
           const value = player[c.key] ?? '-'
+          const props = stickyProps(c)
           if (c.key === 'playerName') {
             return (
-              <Td key={i} px={4} py={1} onClick={onToggle}>
+              <Td key={i} px={4} py={1} {...props} onClick={onToggle}>
                 <HStack>
                   <Heading size="sm">{value}</Heading>
                   <Text color="red" size="sm">
@@ -240,18 +259,7 @@ const PlayerRow: FC<{
           }
           if (c.key === 'drafted') {
             return (
-              <Td
-                key={i}
-                px={0}
-                py={0}
-                position="sticky"
-                zIndex={1}
-                right="1px"
-                background="blue.100 !important"
-                borderRadius={0}
-                transform={'scale(1.02)'}
-                boxShadow="-20px 0px 0px 20px #2c5282"
-              >
+              <Td key={i} {...props}>
                 <Button
                   colorScheme="red"
                   variant="ghost"
@@ -268,7 +276,14 @@ const PlayerRow: FC<{
             )
           }
           return (
-            <Td py={1} px={4} minWidth="100px" w="min-content" key={i}>
+            <Td
+              py={1}
+              px={4}
+              {...props}
+              minWidth={props ? '60px' : '100px'}
+              w="min-content"
+              key={i}
+            >
               {c.isImage ? (
                 <Image
                   src={
