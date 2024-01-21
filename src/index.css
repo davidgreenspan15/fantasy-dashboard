@@ -1,0 +1,35 @@
+body {
+  font-family: 'Oxygen', 'Fira Sans', -apple-system, BlinkMacSystemFont,
+    'Ubuntu', 'Segoe UI', 'Roboto', 'Cantarell', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: '10px' !important;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.css-yk16xz-control {
+  max-height: 80px;
+  overflow: scroll;
+}
+
+.css-1hb7zxy-IndicatorsContainer {
+  max-height: 35px;
+}
+
+.css-g1d714-ValueContainer {
+  flex-wrap: nowrap;
+}
+.MuiChip-label {
+  font-size: 13px;
+}
+
+@media only screen and (max-width: 600px) {
+  .MuiChip-label {
+    font-size: 9px;
+  }
+}

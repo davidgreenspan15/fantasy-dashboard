@@ -1,53 +1,15 @@
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { FC } from 'react'
 
-import { useSearchParams } from 'react-router-dom'
-import { Column } from 'src/types/ColumnDictionary'
-import { Player } from 'src/types/Players'
+import { Column } from '../types/ColumnDictionary'
 
-import { useData } from '../Providers/DataProvider'
 import FDVStack from './CustomChakraComponents/FDVStack'
 import FDVTable from './CustomChakraComponents/table/FDVTable'
+import { PlayersResponse } from '../types/espnApiV2'
 
-const PlayersTable: FC = () => {
-  const { league: leagueName, leagueResponse } = useData()
-
-  const [searchParams] = useSearchParams()
-
-  const teamID = searchParams.get('team')
-  const [players, setPlayers] = useState<Player[]>([])
-
-  const league = useMemo(() => {
-    return leagueResponse?.find((l) => {
-      return l.abr === leagueName
-    })
-  }, [leagueName, leagueResponse])
-
-  useEffect(() => {
-    if (league) {
-      const ps: Player[] = []
-
-      const team = league.teams.find((t) => t.id === teamID)
-      if (team) {
-        team.players
-          .sort((a, b) => (a.positionGroup > b.positionGroup ? 1 : -1))
-          .forEach((p) => {
-            ps.push(p)
-          })
-      } else {
-        league.teams?.forEach((t) => {
-          t.players.forEach((p) => {
-            ps.push(p)
-          })
-        })
-      }
-
-      setPlayers(ps)
-    }
-  }, [league, teamID])
-
+const PlayersTable: FC<{ players: PlayersResponse[] }> = ({ players }) => {
   const columns: Column[] = [
     {
-      key: 'playerImageSrc',
+      key: 'imageUrl',
       label: '',
       columnFilter: false,
       isImage: true,
@@ -57,7 +19,7 @@ const PlayersTable: FC = () => {
       type: 'string',
     },
     {
-      key: 'name',
+      key: 'displayName',
       label: 'Player',
       columnFilter: true,
       isImage: false,
@@ -75,7 +37,7 @@ const PlayersTable: FC = () => {
       type: 'number',
     },
     {
-      key: 'pos',
+      key: 'positionDisplayName',
       label: 'Position',
       columnFilter: true,
       isImage: false,
@@ -84,7 +46,7 @@ const PlayersTable: FC = () => {
       type: 'string',
     },
     {
-      key: 'positionGroup',
+      key: 'parentPositionDisplayName',
       label: 'Position Group',
       columnFilter: true,
       isImage: false,

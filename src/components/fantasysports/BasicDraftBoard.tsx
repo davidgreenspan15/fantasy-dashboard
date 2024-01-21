@@ -19,12 +19,12 @@ import TableBody from './TableBody'
 import TableHeader from './TableHeader'
 
 const BasicDraftBoard: FC = () => {
-  const [{ data, loading }] = useAxios<{ players: NormalizedPlayerResponse[] }>(
-    {
-      path: 'getDraftBoard',
-      method: 'get',
-    }
-  )
+  const [{ data, loading }] = useAxios<{
+    players: NormalizedPlayerResponse[]
+  }>({
+    path: 'getDraftBoard',
+    method: 'get',
+  })
 
   const [columnDictionary, setColumnDictionary] = useState<ColumnDictionary>({})
   const [loadingMore, setLoadingMore] = useState(false)

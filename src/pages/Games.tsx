@@ -2,16 +2,15 @@ import React, { FC, useEffect, useState } from 'react'
 
 import useAxios from '../hooks/axiosHook'
 import { useSearchParams } from 'react-router-dom'
-import { GamesResponse, PlayersResponse } from '../types/espnApiV2'
+import { GamesResponse } from '../types/espnApiV2'
 import useModal from '../util/useModal'
 import LoadingModal from '../components/LoadingModal'
 import GamesTable from '../components/GamesTable'
 import { useData } from '../Providers/DataProvider'
 import FDVStack from '../components/CustomChakraComponents/FDVStack'
 import SeasonSelector from '../components/SeasonWrapper'
-import PlayersTable from '../components/PlayersTable'
 
-const RosterPage: FC = () => {
+const GamesPage: FC = () => {
   const [searchParams] = useSearchParams()
   const {
     modal: loadingModal,
@@ -24,8 +23,8 @@ const RosterPage: FC = () => {
   const [seasonType, setSeasonType] = useState<number>()
   const { leaguesWithTeams } = useData()
 
-  const [{ data, loading, error }, call] = useAxios<PlayersResponse[]>({
-    path: 'getRoster',
+  const [{ data, loading, error }, call] = useAxios<GamesResponse[]>({
+    path: 'getGames',
     method: 'post',
     lazy: true,
   })
@@ -33,10 +32,10 @@ const RosterPage: FC = () => {
   if (error) {
     console.log(error)
   }
-  console.log(data)
+
   useEffect(() => {
     if (leaguesWithTeams && displayYear && seasonType) {
-      call('getRoster', 'post', {
+      call('getGames', 'post', {
         teamId: teamId,
         displayYear: displayYear,
         seasonType: seasonType,
@@ -62,9 +61,9 @@ const RosterPage: FC = () => {
         setSeasonType={setSeasonType}
       />
 
-      <PlayersTable players={data ?? []} />
+      <GamesTable games={data ?? []} />
     </FDVStack>
   )
 }
 
-export default RosterPage
+export default GamesPage

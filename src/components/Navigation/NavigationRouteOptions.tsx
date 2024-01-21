@@ -13,7 +13,7 @@ const NavigationRouteOptions: FC<{ route: string }> = ({ route }) => {
       borderLeft="none"
       borderRight="none"
       as={Link}
-      to={route}
+      to={`/${route}`}
       justifyContent="flex-start"
       textTransform={'capitalize'}
     >

@@ -9,4 +9,5 @@ export interface Column {
   canSort: boolean
   sticky?: string
   display: boolean
+  onClick?: (id?: string) => void
 }

@@ -1,21 +1,29 @@
 import React, { FC } from 'react'
 
 import { Link as RRLink } from 'react-router-dom'
-import { Team } from 'src/types/Teams'
 
 import { HStack, Image, Link, Text } from '@chakra-ui/react'
 
 import FDVStack from './CustomChakraComponents/FDVStack'
 
-const TeamCard: FC<{ team: Team }> = ({ team }) => {
+const TeamCard: FC<{
+  team: {
+    id: string
+    name: string
+    abbreviation: string
+    displayName: string
+    location: string
+    imageUrl?: string
+  }
+}> = ({ team }) => {
   return (
     <FDVStack border="1px solid #DDDDDD" borderRadius={'10px'}>
       <HStack>
-        <Image src={team.imgSrc} boxSize="100px" />
+        <Image src={team.imageUrl} boxSize="100px" />
         <FDVStack>
           <HStack>
             <Text size="sm" color="secondaryColor">
-              {team.city}
+              {team.location}
             </Text>
             <Text>{team.name}</Text>
           </HStack>
@@ -23,11 +31,14 @@ const TeamCard: FC<{ team: Team }> = ({ team }) => {
             <Link as={RRLink} to={`/players?team=${team.id}`}>
               Players
             </Link>
-            <Link as={RRLink} to={`/rosters/${team.id}`}>
+            <Link as={RRLink} to={`/roster?team=${team.id}`}>
               Roster
             </Link>
             <Link as={RRLink} to={`/depth_charts?team=${team.id}`}>
               Depth Chart
+            </Link>
+            <Link as={RRLink} to={`/games?team=${team.id}`}>
+              Games
             </Link>
           </HStack>
         </FDVStack>

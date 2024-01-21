@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
 
-import axios, { AxiosError } from 'axios'
+import axios, { AxiosError, Method } from 'axios'
 
 import { useAxiosResults } from '../types/useAxios'
 
 interface AxiosRequest {
   path: string
-  method: string
+  method: Method
   lazy?: boolean
   skip?: boolean
   params?: unknown
@@ -23,39 +23,26 @@ const useAxios: <T>(req: AxiosRequest) => useAxiosResults<T> = ({
   const [data, setData] = useState<unknown>(undefined)
   const [error, setError] = useState<AxiosError>()
   const baseUrl = 'http://localhost:8000/'
-  const getData = useCallback(
-    async (path: string, method: string, params?: unknown) => {
-      if (!loading) {
-        setLoading(true)
-      }
-      if (error) {
-        setError(undefined)
-      }
-      try {
-        const resp = await axios.request({
-          url: baseUrl + path,
-          method,
-          data: params,
-        })
-        setData(resp.data)
-        return { data: resp.data }
-      } catch (err) {
-        console.error(err)
-        setError(err as AxiosError)
-        throw err
-      } finally {
-        setLoading(false)
-      }
-    },
-    [error, loading]
-  )
+  const call = useCallback(async (url: string, method: Method, data: any) => {
+    setLoading(true)
+    try {
+      const response = await axios(baseUrl + url, { method, data })
+      setData(response.data)
+      return response
+    } catch (err) {
+      setError(err as AxiosError)
+      throw err
+    } finally {
+      setLoading(false)
+    }
+  }, [])
   useEffect(() => {
     if (!path || !method || lazy || loading || skip || data || error) {
       return
     }
-    getData(path, method, params).catch(() => void 0)
-  }, [data, getData, lazy, loading, method, params, skip, path, error])
-  const x = [{ loading, data, error }, getData]
+    call(path, method, params).catch(() => void 0)
+  }, [data, call, lazy, loading, method, params, skip, path, error])
+  const x = [{ loading, data, error }, call]
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return x as useAxiosResults<any>
 }

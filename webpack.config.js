@@ -1,44 +1,44 @@
-const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const webpack = require('webpack')
-const ESLintPlugin = require('eslint-webpack-plugin')
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const webpack = require('webpack');
 
 module.exports = {
   entry: './src/index.tsx',
-  output: {
-    path: path.join(__dirname, '/dist'),
-    filename: 'bundle.js',
-  },
+  target: 'node',
+  mode: 'development',
   devServer: {
-    port: 3000,
-    historyApiFallback: true,
-    client: {
-      overlay: {
-        errors: true,
-        warnings: false,
-      },
-    },
+    contentBase: './dist',
   },
-
+  output: {
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+    clean: true,
+    publicPath: '/',
+  },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
+    extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
   },
   module: {
     rules: [
-      { test: /\.tsx?$/, exclude: /node_modules/, loader: 'ts-loader' },
       {
-        test: /\.jsx?$/,
+        test: /\.tsx?$/,
+        use: 'ts-loader',
         exclude: /node_modules/,
-        loader: 'babel-loader',
+      },
+      {
+        enforce: 'pre',
+        test: /\.js$/,
+        loader: 'source-map-loader',
       },
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader'],
+        loader: 'css-loader',
       },
       {
-        test: /\.js$/,
-        enforce: 'pre',
-        use: ['source-map-loader'],
+        test: /\.(png|svg|jpg|jpeg|gif|ico)$/,
+        exclude: /node_modules/,
+        use: ['file-loader?name=[name].[ext]'], // ?name=[name].[ext] is only necessary to preserve the original file name
       },
     ],
   },
@@ -51,12 +51,13 @@ module.exports = {
         process.env.REACT_APP_LOCAL || 'True'
       ),
     }),
+
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, '/src/index.html'),
+      template: path.resolve(__dirname, 'public', 'index.html'),
+      favicon: path.resolve(__dirname, 'src', 'assets/sports_logo.png'),
     }),
-    new ESLintPlugin({
-      extensions: ['js', 'jsx', 'ts', 'tsx'],
-      failOnWarning: false,
+    new MiniCssExtractPlugin({
+      filename: './src/App.css',
     }),
   ],
-}
+};

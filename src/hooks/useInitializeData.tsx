@@ -3,14 +3,14 @@ import { useEffect } from 'react'
 import { useToast } from '@chakra-ui/react'
 
 import { useData } from '../Providers/DataProvider'
-import { Leagues } from '../types/LeagueResponse'
 import useAxios from './axiosHook'
+import { LeagueWithTeamsResponse } from '../types/espnApiV2'
 
 export const useInitializeData = () => {
-  const { setLeagueResponse } = useData()
+  const { setLeaguesWithTeams, setLeague, league } = useData()
   const toast = useToast()
-  const [{ data, error }] = useAxios<Leagues>({
-    path: 'getPlayers',
+  const [{ data, error }] = useAxios<LeagueWithTeamsResponse.League[]>({
+    path: 'getLeaguesWithTeams',
     method: 'get',
   })
 
@@ -26,8 +26,12 @@ export const useInitializeData = () => {
   }, [error, toast])
 
   useEffect(() => {
-    if (data && data['leagues']) {
-      setLeagueResponse(data['leagues'])
+    if (data) {
+      setLeaguesWithTeams(data)
+      const defaultLeague = data.find((l) => l.abbreviation === 'NFL')
+      if (defaultLeague && !league) {
+        setLeague(defaultLeague)
+      }
     }
-  }, [data, setLeagueResponse])
+  }, [data, setLeague, setLeaguesWithTeams, league])
 }

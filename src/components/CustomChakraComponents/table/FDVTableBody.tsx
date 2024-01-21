@@ -203,19 +203,25 @@ function sortRows(
         return 0
       })
     }
+    // Check if the sorting type is 'date'
+    if (sortSettings.type === 'date') {
+      return rowsClone?.sort(function (a, b) {
+        const dateA = new Date(a[sortSettings.column])
+        const dateB = new Date(b[sortSettings.column])
+
+        if (sortSettings.dir === 'up') {
+          return dateA.getTime() - dateB.getTime()
+        }
+        return dateB.getTime() - dateA.getTime()
+      })
+    }
   }
   return rowsClone
 }
 
 const FDVRow: FC<{
-  row: any[]
-  columns: {
-    key: string
-    label?: string
-    columnFilter: boolean
-    isImage?: boolean
-    sticky?: string
-  }[]
+  row: any
+  columns: Column[]
   setVisibilityIndex: React.Dispatch<{
     type: string
     value: any
@@ -263,9 +269,12 @@ const FDVRow: FC<{
   return (
     <Tr ref={ref}>
       {columns.map((c, i) => {
-        const value = row[c.key] ?? '-'
-        const props = stickyProps(c)
+        let value = row[c.key]
 
+        if (c.key.includes('.')) {
+          value = row[c.key.split('.')[0]][c.key.split('.')[1]]
+        }
+        const props = stickyProps(c)
         return (
           <Td
             py={1}
@@ -274,20 +283,27 @@ const FDVRow: FC<{
             minWidth={props ? '60px' : '100px'}
             w="min-content"
             key={i}
+            cursor={c.onClick ? 'pointer' : 'default'}
+            fontWeight={c.onClick ? 'bold' : 'normal'}
+            onClick={() => c.onClick?.(row.id)}
           >
             {c.isImage ? (
               !displayImage(firstAndLast, idx, isVisible) ? null : (
                 <Image
                   src={
-                    value !== '-'
-                      ? value
-                      : 'https://a.espncdn.com/combiner/i?img=/i/headshots/nophoto.png'
+                    value ||
+                    'https://a.espncdn.com/combiner/i?img=/i/headshots/nophoto.png'
                   }
                   height="40px"
                 />
               )
+            ) : c.type === 'date' ? (
+              new Date(value).toLocaleString()
+            ) : typeof value === 'boolean' ? (
+              value.toString().charAt(0).toUpperCase() +
+              value.toString().slice(1)
             ) : (
-              value
+              value || '-'
             )}
           </Td>
         )

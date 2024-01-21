@@ -1,6 +1,6 @@
 import React, { FC, useMemo } from 'react'
 
-import { Player } from 'src/types/Players'
+import { Player } from '../types/Players'
 
 import {
   Table,

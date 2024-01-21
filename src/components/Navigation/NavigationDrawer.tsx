@@ -45,15 +45,25 @@ const NavigationDrawer: FC = () => {
     onClose: onCloseModal,
   } = useDisclosure()
 
-  const { league, setLeague, leagueResponse } = useData()
+  const { league, setLeague, leaguesWithTeams } = useData()
   useInitializeData()
   const [{ loading, progress, error }, refreshPlayerData] =
     useRefreshPlayerData()
 
+  const selectLeague = (abbreviation: string) => {
+    const league = leaguesWithTeams?.find(
+      (l) => l.abbreviation === abbreviation
+    )
+    console.log({ league })
+    if (league) {
+      setLeague(league)
+    }
+  }
+
   const routes = [
     'teams',
     'depth-charts',
-    'rosters',
+    'roster',
     'players',
     'fantasy-draft-board',
     'sql-tool',
@@ -80,16 +90,16 @@ const NavigationDrawer: FC = () => {
         <Button onClick={onOpenModal}>Refresh Player Data</Button>
 
         <Select
-          value={league}
+          value={league?.abbreviation ?? 'NFL'}
           onChange={(e) => {
-            setLeague(e.target.value)
+            selectLeague(e.target.value)
           }}
           width="150px"
         >
-          {leagueResponse?.map((l, idx) => {
+          {leaguesWithTeams?.map((l, idx) => {
             return (
-              <option value={l.abr} key={idx}>
-                {l.abr.toUpperCase()}
+              <option value={l.abbreviation} key={idx}>
+                {l.abbreviation}
               </option>
             )
           })}

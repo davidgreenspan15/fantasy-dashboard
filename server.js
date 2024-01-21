@@ -1,11 +1,16 @@
-var path = require('path')
-var express = require('express')
+let express = require('express');
 
-var app = express()
+let app = express();
+app.use(express.static(__dirname + '/'));
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static('build'));
+  app.get('*', (req, res) => {
+    res.sendFile('index.html', { root: 'build' });
+  });
+}
 
-app.use(express.static(path.join(__dirname, 'dist')))
-app.set('port', process.env.PORT || 8080)
-
-var server = app.listen(app.get('port'), function () {
-  console.log('listening on port ', server.address().port)
-})
+app.listen(process.env.PORT || 8080, () => {
+  console.log(
+    `Example app listening at http://localhost:${process.env.PORT || 8080}`
+  );
+});
