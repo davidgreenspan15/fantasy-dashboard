@@ -31,9 +31,8 @@ const RosterPage: FC = () => {
   })
 
   if (error) {
-    console.log(error)
+    console.error(error)
   }
-  console.log(data)
   useEffect(() => {
     if (leaguesWithTeams && displayYear && seasonType) {
       call('getRoster', 'post', {

@@ -10,7 +10,7 @@ const TeamsList: FC = () => {
   return (
     <FDVStack>
       {league?.Teams?.map((t, idx) => {
-        return <TeamCard team={t} key={idx} />
+        return <TeamCard team={t} key={idx} showLinks={true} />
       })}
     </FDVStack>
   )

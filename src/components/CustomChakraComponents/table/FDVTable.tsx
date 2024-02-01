@@ -20,8 +20,9 @@ const FDVTable: FC<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   rows: any[]
   props?: TableProps
+  displayColorsAndConfig?: boolean
   limit?: number
-}> = ({ rows, columns, props, limit = 50 }) => {
+}> = ({ rows, columns, props, limit = 50, displayColorsAndConfig = true }) => {
   const [loadingMore, setLoadingMore] = useState(false)
   const [columnFilter, setColumnFilter] = useState(false)
   const [colorCount, setColorCount] = useState(0)
@@ -91,25 +92,30 @@ const FDVTable: FC<{
   }, [columnFilter, columns, sortSettings])
   return (
     <TableContainer>
-      <Text> Color Scheme</Text>
-      <ButtonGroup gap="2" flexWrap={'wrap'} maxW={'50%'} p="10px">
-        {schemes.map((scheme, index) => {
-          return (
-            <Button
-              size="xs"
-              key={index}
-              onClick={() => {
-                setColorCount(index)
-              }}
-              colorScheme={scheme}
-            >
-              {scheme.charAt(0).toUpperCase() + scheme.slice(1)}
-            </Button>
-          )
-        })}
-      </ButtonGroup>
+      {displayColorsAndConfig && (
+        <>
+          <Text> Color Scheme</Text>
+          <ButtonGroup gap="2" flexWrap={'wrap'} maxW={'50%'} p="10px">
+            {schemes.map((scheme, index) => {
+              return (
+                <Button
+                  size="xs"
+                  key={index}
+                  onClick={() => {
+                    setColorCount(index)
+                  }}
+                  colorScheme={scheme}
+                >
+                  {scheme.charAt(0).toUpperCase() + scheme.slice(1)}
+                </Button>
+              )
+            })}
+          </ButtonGroup>
 
-      {memoizedConfig}
+          {memoizedConfig}
+        </>
+      )}
+
       <Table
         variant="striped"
         size="sm"

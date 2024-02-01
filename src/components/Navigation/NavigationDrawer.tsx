@@ -54,7 +54,6 @@ const NavigationDrawer: FC = () => {
     const league = leaguesWithTeams?.find(
       (l) => l.abbreviation === abbreviation
     )
-    console.log({ league })
     if (league) {
       setLeague(league)
     }

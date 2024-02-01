@@ -26,7 +26,7 @@ const PlayersPage: FC = () => {
   })
 
   if (error) {
-    console.log(error)
+    console.error(error)
   }
 
   useEffect(() => {

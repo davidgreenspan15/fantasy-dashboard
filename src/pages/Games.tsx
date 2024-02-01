@@ -9,6 +9,7 @@ import GamesTable from '../components/GamesTable'
 import { useData } from '../Providers/DataProvider'
 import FDVStack from '../components/CustomChakraComponents/FDVStack'
 import SeasonSelector from '../components/SeasonWrapper'
+import { isEqual } from 'lodash'
 
 const GamesPage: FC = () => {
   const [searchParams] = useSearchParams()
@@ -21,7 +22,7 @@ const GamesPage: FC = () => {
 
   const [displayYear, setDisplayYear] = useState<string>()
   const [seasonType, setSeasonType] = useState<number>()
-  const { leaguesWithTeams } = useData()
+  const { leaguesWithTeams, setGames, games } = useData()
 
   const [{ data, loading, error }, call] = useAxios<GamesResponse[]>({
     path: 'getGames',
@@ -30,7 +31,7 @@ const GamesPage: FC = () => {
   })
 
   if (error) {
-    console.log(error)
+    console.error(error)
   }
 
   useEffect(() => {
@@ -39,9 +40,20 @@ const GamesPage: FC = () => {
         teamId: teamId,
         displayYear: displayYear,
         seasonType: seasonType,
+      }).then((res) => {
+        const data = res.data
+        if (data) {
+          const d = games[`${teamId}_${displayYear}_${seasonType}`]
+          if (!isEqual(d, data)) {
+            setGames({
+              ...games,
+              [`${teamId}_${displayYear}_${seasonType}`]: data,
+            })
+          }
+        }
       })
     }
-  }, [displayYear, seasonType, leaguesWithTeams, teamId, call])
+  }, [displayYear, seasonType, leaguesWithTeams, teamId, call, games, setGames])
 
   useEffect(() => {
     if (loading) {
@@ -50,7 +62,6 @@ const GamesPage: FC = () => {
       onCloseLoadingModal()
     }
   }, [loading, onCloseLoadingModal, onOpenLoadingModal])
-
   return (
     <FDVStack>
       {loadingModal}
