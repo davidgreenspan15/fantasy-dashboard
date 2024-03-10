@@ -2,14 +2,22 @@ import { Flex, Select } from '@chakra-ui/react'
 import { FC, useEffect, useState } from 'react'
 
 import { useData } from '../Providers/DataProvider'
-import { LeagueWithTeamsResponse } from '../types/espnApiV2'
 
 const SeasonSelector: FC<{
   displayYear?: string
   seasonType?: number
   setDisplayYear: (value: string) => void
   setSeasonType: (value: number) => void
-}> = ({ displayYear, seasonType, setDisplayYear, setSeasonType }) => {
+  page: 'schedule' | 'roster'
+  teamId?: string
+}> = ({
+  displayYear,
+  seasonType,
+  setDisplayYear,
+  setSeasonType,
+  page,
+  teamId,
+}) => {
   const [displayYearOptions, setDisplayYearOptions] = useState<
     {
       label: string
@@ -26,32 +34,25 @@ const SeasonSelector: FC<{
   const { league } = useData()
 
   useEffect(() => {
-    const displayYearHash: Record<string, LeagueWithTeamsResponse.Game> = {}
-    const seasonTypeHash: Record<string, LeagueWithTeamsResponse.Game> = {}
-    league?.Games?.forEach((g) => {
-      if (!g.Season) {
-      }
-      displayYearHash[g.Season.displayYear] = g
-      seasonTypeHash[g.Season.type] = g
-    })
-    const displayYearOptions = Object.keys(displayYearHash).map((k) => {
-      return {
-        label: displayYearHash[k].Season.displayYear,
-        value: displayYearHash[k].Season.displayYear,
-      }
-    })
-    const seasonTypeOptions = Object.keys(seasonTypeHash).map((k) => {
-      return {
-        label: seasonTypeHash[k].Season.name,
-        value: seasonTypeHash[k].Season.type,
-      }
-    })
-    setDisplayYearOptions(displayYearOptions)
-    setDisplayYear(displayYearOptions[displayYearOptions.length - 1]?.value)
-    setSeasonTypeOptions(seasonTypeOptions)
-    setSeasonType(seasonTypeOptions[seasonTypeOptions.length - 1]?.value)
-  }, [league, setDisplayYear, setSeasonType])
+    const team = league?.Teams.find((t) => t.id === teamId)
+    let seasons = team?.GameSeason
+    if (page === 'roster') {
+      seasons = team?.RosterSeason
+    }
+    if (seasons) {
+      const displayYearOptions = seasons?.displayYears.map((y) => {
+        return { label: y, value: y }
+      })
+      const seasonTypeOptions = seasons.types.map((t) => {
+        return { label: t.name, value: t.type }
+      })
 
+      setDisplayYearOptions(displayYearOptions)
+      setDisplayYear(displayYearOptions[displayYearOptions.length - 1]?.value)
+      setSeasonTypeOptions(seasonTypeOptions)
+      setSeasonType(seasonTypeOptions[seasonTypeOptions.length - 1]?.value)
+    }
+  }, [league, page, setDisplayYear, setSeasonType, teamId])
   return (
     <Flex justifyContent={'space-between'}>
       <SelectField

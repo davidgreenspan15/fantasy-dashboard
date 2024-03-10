@@ -1,23 +1,23 @@
-import React, { FC, useEffect, useMemo } from 'react'
-
-import { Flex, Heading } from '@chakra-ui/react'
-
-import useAxios from '../hooks/axiosHook'
-import { useSearchParams } from 'react-router-dom'
-import { GameSummaryResponse, GamesResponse } from '../types/espnApiV2'
-import useModal from '../util/useModal'
-import LoadingModal from '../components/LoadingModal'
-import FDVStack from '../components/CustomChakraComponents/FDVStack'
-import TeamCard from '../components/TeamCard'
-import { useData } from '../Providers/DataProvider'
+import { Heading, SimpleGrid, useMediaQuery } from '@chakra-ui/react'
 import { isEmpty } from 'lodash'
+import React, { FC, useEffect, useMemo } from 'react'
+import { useParams } from 'react-router-dom'
+
+import BackgroundComponent from '../components/BackgroundComponent'
+import FDVStack from '../components/CustomChakraComponents/FDVStack'
+import LoadingModal from '../components/LoadingModal'
+import NoHeaderTable, { Column } from '../components/NoHeaderTable'
+import TeamCard from '../components/TeamCard'
+import useAxios from '../hooks/axiosHook'
+import { useData } from '../Providers/DataProvider'
+import { minWidth } from '../themes/themes'
+import { GamesResponse, GameSummaryResponse } from '../types/espnApiV2'
 import { Sport, sportPeriod } from '../util/tools'
-import PlayersGameSummaryTable from '../components/PlayersGameSummaryTable'
+import useModal from '../util/useModal'
 
 const oneMinute = 60000
 const GameSummaryPage: FC = () => {
-  const [searchParams] = useSearchParams()
-  const gameId = searchParams.get('game')
+  const { gameId } = useParams<{ gameId: string }>()
   const { games, league } = useData()
 
   const [{ data: gameResponse }] = useAxios<GamesResponse>({
@@ -73,7 +73,7 @@ const GameSummaryPage: FC = () => {
           gameId: gameId,
           shouldMigrateGame,
         })
-      }, oneMinute * 2)
+      }, oneMinute / 2)
       setTimeoutRef(t)
     }
   }, [call, data, gameId, shouldMigrateGame])
@@ -95,74 +95,116 @@ const GameSummaryPage: FC = () => {
   }, [data, loading, onCloseLoadingModal, onOpenLoadingModal])
   const homeTeam = data?.teams?.find((d) => d.isHome)
   const awayTeam = data?.teams?.find((d) => !d.isHome)
+  const isDesktop = useMediaQuery(minWidth)[0]
+  const gridColumns = isDesktop ? 2 : 1
+
   return (
-    <FDVStack>
+    <FDVStack w="100%">
       {loadingModal}
       {data && (
-        <Flex justifyContent="space-evenly">
-          {homeTeam && (
-            <TeamCard
-              team={homeTeam}
-              showLinks={false}
-              score={homeTeam.TeamStatistics?.teamScore ?? 0}
-            />
-          )}
-          <FDVStack w="auto" alignItems={'center'} justifyContent={'center'}>
-            {!data.isComplete && data.period && league && (
-              <Heading>
-                {sportPeriod(league.abbreviation as Sport, data.period)}
-              </Heading>
+        <FDVStack w="100%">
+          <SimpleGrid columns={3} gap={isDesktop ? 4 : 2}>
+            {homeTeam && (
+              <TeamCard
+                team={homeTeam}
+                showLinks={false}
+                score={homeTeam.TeamStatistics?.teamScore ?? 0}
+              />
             )}
-            <Heading>{data?.isComplete ? 'Final' : data?.timeOnClock}</Heading>
-          </FDVStack>
-          {awayTeam && (
-            <TeamCard
-              team={awayTeam}
-              showLinks={false}
-              flexDirection="row-reverse"
-              score={awayTeam.TeamStatistics?.teamScore ?? 0}
-            />
-          )}
-        </Flex>
+            <Heading variant="floating" alignSelf={'center'} w="100%">
+              {data?.isComplete
+                ? 'Final'
+                : sportPeriod(league?.abbreviation as Sport, data.period) +
+                  ' : ' +
+                  data?.timeOnClock}
+            </Heading>
+            {awayTeam && (
+              <TeamCard
+                team={awayTeam}
+                showLinks={false}
+                flexDirection="row-reverse"
+                score={awayTeam.TeamStatistics?.teamScore ?? 0}
+              />
+            )}
+          </SimpleGrid>
+        </FDVStack>
       )}
 
-      <Flex justifyContent="space-evenly">
-        <FDVStack maxW={'45vw'}>
+      <SimpleGrid columns={gridColumns} gap={4} w="100%">
+        <FDVStack w="100%">
           {homeTeam &&
             Object.keys(homeTeam.athletesStatistics ?? {})
               ?.sort()
-              ?.map((as) => {
+              ?.map((as, idx) => {
                 const stats = homeTeam.athletesStatistics[as]
                 return (
-                  <FDVStack key={as} columnGap={'2px'} mt="10px">
-                    <Heading mb={'-20px'}>
-                      {as.replace('Statistic', '')}
-                    </Heading>
-                    <PlayersGameSummaryTable playerStat={stats} />
-                  </FDVStack>
+                  <StatisticsTable
+                    key={idx}
+                    title={as}
+                    titleBgColor={homeTeam.color}
+                    stats={stats}
+                  />
                 )
               })}
         </FDVStack>
 
-        <FDVStack maxW={'45vw'}>
+        <FDVStack>
           {awayTeam &&
             Object.keys(awayTeam.athletesStatistics ?? {})
               ?.sort()
-              ?.map((as) => {
+              ?.map((as, idx) => {
                 const stats = awayTeam.athletesStatistics[as]
                 return (
-                  <FDVStack key={as} columnGap={'2px'} mt="10px">
-                    <Heading mb={'-20px'}>
-                      {as.replace('Statistic', '')}
-                    </Heading>
-                    <PlayersGameSummaryTable playerStat={stats} />
-                  </FDVStack>
+                  <StatisticsTable
+                    key={idx}
+                    title={as}
+                    titleBgColor={awayTeam.color}
+                    stats={stats}
+                  />
                 )
               })}
         </FDVStack>
-      </Flex>
+      </SimpleGrid>
     </FDVStack>
   )
 }
 
 export default GameSummaryPage
+
+const StatisticsTable: FC<{
+  title: string
+  titleBgColor: string
+  stats: GameSummaryResponse.AthleteStatisticTypes
+}> = ({ title, titleBgColor, stats }) => {
+  const columns = Object.values(
+    stats.reduce((acc, s) => {
+      Object.keys(s).forEach((k) => {
+        if (k === 'athleteId') return
+        if (!acc[k]) {
+          if (k === 'imageUrl') {
+            acc[k] = {
+              label: k,
+              key: k,
+              type: 'image',
+            }
+          } else {
+            acc[k] = {
+              label: k,
+              key: k,
+              type: 'string',
+            }
+          }
+        }
+      })
+      return acc
+    }, {} as Record<string, Column>)
+  )
+  return (
+    <BackgroundComponent
+      title={title.replace('Statistic', '')}
+      titleBgColor={titleBgColor}
+    >
+      <NoHeaderTable showColumnHeaders={true} rows={stats} columns={columns} />
+    </BackgroundComponent>
+  )
+}

@@ -1,7 +1,22 @@
-export const TextStyles = {
+import { defineStyle } from '@chakra-ui/react'
+
+const floating = defineStyle({
+  backgroundColor: 'glassBackground', // Adjust the alpha for transparency
+  backdropFilter: 'blur(12px)',
+  py: '10px',
+  px: '30px',
+  borderRadius: '80px',
+  width: 'fit-content',
+  letterSpacing: 'wider',
+  textTransform: 'uppercase',
+  fontSize: '12px',
+  textAlign: 'center',
+})
+
+export const Heading = {
   baseStyle: {
     fontFamily: 'primaryFont',
-    fontWeight: 500,
+    fontSize: '32px',
   },
   sizes: {
     xs: {
@@ -21,6 +36,7 @@ export const TextStyles = {
     },
   },
   variants: {
+    floating,
     primary: {
       fontFamily: 'primaryFont',
       color: 'primaryColor',
@@ -32,6 +48,6 @@ export const TextStyles = {
   },
   defaultProps: {
     variant: 'primary',
-    size: 'md',
+    size: ['sm', 'md'],
   },
 }

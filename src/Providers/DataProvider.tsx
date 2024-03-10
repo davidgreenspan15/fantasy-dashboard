@@ -11,6 +11,8 @@ type DataContextType = {
   ) => void
   league?: LeagueWithTeamsResponse.League
   setLeague: (league: LeagueWithTeamsResponse.League) => void
+  team?: LeagueWithTeamsResponse.Team
+  setTeam: (team?: LeagueWithTeamsResponse.Team) => void
   games: Record<string, GamesResponse[]>
   setGames: (games: Record<string, GamesResponse[]>) => void
 }
@@ -20,6 +22,7 @@ const initialCtx: DataContextType = {
     leaguesWithTeams: LeagueWithTeamsResponse.League[]
   ) => {},
   setLeague: (league: LeagueWithTeamsResponse.League) => {},
+  setTeam: (team?: LeagueWithTeamsResponse.Team) => {},
   games: {},
   setGames: (games: Record<string, GamesResponse[]>) => {},
 }
@@ -30,6 +33,7 @@ export const DataProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [leaguesWithTeams, setLeaguesWithTeams] =
     useState<LeagueWithTeamsResponse.League[]>()
   const [league, setLeague] = useState<LeagueWithTeamsResponse.League>()
+  const [team, setTeam] = useState<LeagueWithTeamsResponse.Team>()
   const [games, setGames] = useState<Record<string, GamesResponse[]>>({})
   const value: DataContextType = {
     leaguesWithTeams: leaguesWithTeams,
@@ -37,6 +41,8 @@ export const DataProvider: React.FC<PropsWithChildren> = ({ children }) => {
       setLeaguesWithTeams(leaguesWithTeams),
     league: league,
     setLeague: (league: LeagueWithTeamsResponse.League) => setLeague(league),
+    team: team,
+    setTeam: (team?: LeagueWithTeamsResponse.Team) => setTeam(team),
     games: games,
     setGames: (games: Record<string, GamesResponse[]>) => setGames(games),
   }

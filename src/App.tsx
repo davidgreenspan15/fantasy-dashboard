@@ -4,7 +4,7 @@ import React, { FC } from 'react'
 
 import { RouterProvider } from 'react-router-dom'
 
-import { ChakraProvider } from '@chakra-ui/react'
+import { ChakraProvider, Image } from '@chakra-ui/react'
 
 import router from './router'
 import ErrorBoundary from './ErrorBoundry'
@@ -15,6 +15,16 @@ const App: FC = () => {
   return (
     <ErrorBoundary>
       <ChakraProvider theme={theme}>
+        <Image
+          position="fixed"
+          width={'100vw'}
+          height={'100vh'}
+          objectFit="cover"
+          src="https://wallpapercave.com/wp/wp2839196.jpg"
+          objectPosition={'center'}
+          bgRepeat={'no-repeat'}
+          zIndex={-1}
+        />
         <DataProvider>
           <RouterProvider router={router} />
         </DataProvider>

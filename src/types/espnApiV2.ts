@@ -3,30 +3,38 @@ export namespace LeagueWithTeamsResponse {
     id: string
     name: string
     shortName: string
-    Teams: Team[]
     abbreviation: string
-    Games: Game[]
-    Rosters: Roster[]
+    Teams: Team[]
   }
+
   export interface Team {
     id: string
     name: string
     abbreviation: string
     displayName: string
     location: string
-    imageUrl?: string
+    imageUrl: string
+    GameSeason: Season
+    RosterSeason: Season
+    alternateColor: string
+    color: string
   }
 
-  export interface Roster {
-    Season: Season
-  }
-  export interface Game {
-    Season: Season
-  }
   export interface Season {
-    displayYear: string
+    displayYears: string[]
+    types: Type[]
+  }
+
+  export interface Type {
+    name: Name
     type: number
-    name: string
+  }
+
+  export enum Name {
+    OffSeason = 'Off Season',
+    Postseason = 'Postseason',
+    RegularSeason = 'Regular Season',
+    SpringTraining = 'Spring Training',
   }
 }
 
@@ -273,6 +281,7 @@ export interface PlayersResponse {
   number: string
   positionDisplayName: string
   parentPositionDisplayName: string
+  rootParentPositionDisplayName: string
 }
 
 export interface GamesResponse {

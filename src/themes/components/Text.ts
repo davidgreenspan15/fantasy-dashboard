@@ -1,8 +1,7 @@
-export const HeadingStyles = {
+export const Text = {
   baseStyle: {
     fontFamily: 'primaryFont',
-    fontSize: '32px',
-    fontWeight: 600,
+    fontWeight: '600',
   },
   sizes: {
     xs: {
@@ -24,15 +23,13 @@ export const HeadingStyles = {
   variants: {
     primary: {
       fontFamily: 'primaryFont',
-      color: 'primaryColor',
     },
     secondary: {
       fontFamily: 'secondaryFont',
-      color: 'secondaryColor',
     },
   },
   defaultProps: {
     variant: 'primary',
-    size: 'md',
+    size: ['xs', 'sm'],
   },
 }

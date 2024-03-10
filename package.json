@@ -18,8 +18,9 @@
     "express": "^4.17.1",
     "framer-motion": "^10.16.16",
     "html-webpack-plugin": "^5.5.4",
-    "mini-css-extract-plugin": "^2.7.6",
     "lodash": "^4.17.21",
+    "mini-css-extract-plugin": "^2.7.6",
+    "moment-timezone": "^0.5.45",
     "prettier": "^2.7.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -38,7 +39,6 @@
     "postinstall": "yarn build"
   },
   "devDependencies": {
-   
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
   },
   "eslintConfig": {

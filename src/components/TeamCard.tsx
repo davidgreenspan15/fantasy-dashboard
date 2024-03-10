@@ -1,10 +1,21 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 
 import { Link as RRLink } from 'react-router-dom'
 
-import { Box, HStack, Heading, Image, Link, Text } from '@chakra-ui/react'
+import {
+  Box,
+  Flex,
+  HStack,
+  Heading,
+  Image,
+  Link,
+  Text,
+  useMediaQuery,
+} from '@chakra-ui/react'
 
 import FDVStack from './CustomChakraComponents/FDVStack'
+import { hexToRgb } from './BackgroundComponent'
+import { minWidth } from '../themes/themes'
 
 const TeamCard: FC<{
   team: {
@@ -28,28 +39,41 @@ const TeamCard: FC<{
 }> = ({ team, showLinks, flexDirection, score }) => {
   const teamColor = team.color && `#${team.color}`
   const teamAlternateColor = team.alternateColor && `#${team.alternateColor}`
+  const isDesktop = useMediaQuery(minWidth)[0]
+  const teamName = isDesktop ? team.displayName : team.name
+  const fontSize = isDesktop ? undefined : '12px'
   return (
     <FDVStack
-      border="1px solid #DDDDDD"
-      borderRadius={'10px'}
-      w="auto"
-      backgroundColor={teamAlternateColor}
+      w="100%"
+      backgroundColor={
+        teamAlternateColor ? hexToRgb(teamAlternateColor, 1) : 'unset'
+      }
       overflow={'hidden'}
-      minW={!showLinks ? '320px' : undefined}
+      borderRadius={10}
     >
-      <HStack flexDirection={flexDirection} justifyContent={'space-between'}>
+      <Flex
+        flexDirection={flexDirection}
+        justifyContent={'space-between'}
+        w="100%"
+        alignItems={'center'}
+      >
         <HStack flexDirection={flexDirection}>
-          <Box backgroundColor={teamColor}>
-            <Image src={team.imageUrl} boxSize="100px" />
+          <Box
+            backgroundColor={teamColor ? hexToRgb(teamColor, 1) : 'unset'}
+            p="5px"
+          >
+            <Image src={team.imageUrl} boxSize={isDesktop ? '50px' : '38px'} />
           </Box>
 
           <FDVStack w="inherit">
             <HStack>
               {teamColor ? (
-                <Text color={teamColor}>{team.displayName}</Text>
+                <Text color={teamColor} fontSize={fontSize}>
+                  {teamName}
+                </Text>
               ) : (
                 <>
-                  <Text size="sm" color={'secondaryColor'}>
+                  <Text fontSize={fontSize} color={'secondaryColor'}>
                     {team.location}
                   </Text>
                   <Text>{team.name}</Text>
@@ -61,11 +85,15 @@ const TeamCard: FC<{
           </FDVStack>
         </HStack>
         {score !== undefined && (
-          <Heading px="20px" size="xl" color={teamColor}>
+          <Heading
+            px={isDesktop ? '20px' : '10px'}
+            fontSize={fontSize}
+            color={teamColor}
+          >
             {score}
           </Heading>
         )}
-      </HStack>
+      </Flex>
     </FDVStack>
   )
 }

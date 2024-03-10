@@ -1,10 +1,8 @@
-import React, { FC } from 'react'
-
 import { Flex } from '@chakra-ui/react'
-
+import { FC } from 'react'
 import { Outlet } from 'react-router-dom'
 
-const TeamsPage: FC = () => {
+const ScoreboardPage: FC = () => {
   return (
     <Flex w="100%">
       <Outlet />
@@ -12,4 +10,4 @@ const TeamsPage: FC = () => {
   )
 }
 
-export default TeamsPage
+export default ScoreboardPage
