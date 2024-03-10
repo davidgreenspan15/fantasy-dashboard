@@ -12,6 +12,7 @@ export type CallResult<T> = {
 export type CallFn<T> = (
   url: string,
   method: string,
+  data?: unknown,
   params?: unknown
 ) => Promise<{
   data: T

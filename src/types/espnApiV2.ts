@@ -14,10 +14,21 @@ export namespace LeagueWithTeamsResponse {
     displayName: string
     location: string
     imageUrl: string
+    Division: Division
     GameSeason: Season
     RosterSeason: Season
     alternateColor: string
     color: string
+  }
+
+  export interface Division {
+    id: string
+    name: string
+    Conference: Conference
+  }
+  export interface Conference {
+    id: string
+    name: string
   }
 
   export interface Season {
@@ -297,5 +308,42 @@ export interface GamesResponse {
   period?: number
   Statistics?: {
     isComplete: boolean
+  }
+}
+
+export namespace TodaysBirthdaysResponse {
+  export interface TodaysBirthdaysResponse {
+    fullName: string
+    dateOfBirth: string
+    birthday: string
+    espnUrl: string
+    Position: Position
+    League: League
+    Team: Team
+    AthleteGameStatistic: any[]
+  }
+
+  export interface Position {
+    name: string
+    abbreviation: string
+  }
+
+  export interface Team {
+    id: string
+    name: string
+    abbreviation: string
+    League: League
+    Games: Game[]
+  }
+
+  export interface Game {
+    date: string
+    name: string
+    week: null
+    'Formatted Dated': string
+  }
+
+  export interface League {
+    abbreviation: string
   }
 }

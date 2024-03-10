@@ -34,7 +34,7 @@ const GamesPage: FC = () => {
   }
 
   useEffect(() => {
-    if (team && displayYear && seasonType) {
+    if (team && displayYear && seasonType && !loading) {
       const teamId = team.id
       call('getGames', 'post', {
         teamId: teamId,

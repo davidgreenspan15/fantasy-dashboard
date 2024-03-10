@@ -17,6 +17,8 @@ import LeaguePage from './pages/Leagues'
 import TeamsList from './components/TeamsList'
 import TeamPage from './pages/Team'
 import ScoreboardPage from './pages/ScoreboardPage'
+import Tools from './pages/Tools'
+import TodaysBirthdays from './components/TodaysBirthdays'
 
 const router = createBrowserRouter([
   {
@@ -72,6 +74,17 @@ const router = createBrowserRouter([
                 element: <GameSummaryPage />,
               },
             ],
+          },
+        ],
+      },
+      {
+        path: 'tools',
+        element: <Tools />,
+        children: [
+          {
+            path: 'todays_birthdays',
+            errorElement: <ErrorPage />,
+            element: <TodaysBirthdays />,
           },
         ],
       },

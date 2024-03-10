@@ -11,25 +11,18 @@ import NoHeaderTable from './NoHeaderTable'
 const TeamsList: FC = () => {
   const { league } = useData()
 
-  const teamsOfFour = league?.Teams?.reduce((acc, team, idx) => {
-    if (idx % 4 === 0) {
-      acc.push([team])
-    } else {
-      acc[acc.length - 1].push(team)
+  // Group Teams by Conference and Division
+  const conferences = league?.Teams?.reduce((acc, team) => {
+    if (!acc[team.Division.Conference.name]) {
+      acc[team.Division.Conference.name] = {}
     }
+    if (!acc[team.Division.Conference.name][team.Division.name]) {
+      acc[team.Division.Conference.name][team.Division.name] = []
+    }
+    acc[team.Division.Conference.name][team.Division.name].push(team)
     return acc
-  }, [] as LeagueWithTeamsResponse.Team[][])
+  }, {} as Record<string, Record<string, LeagueWithTeamsResponse.Team[]>>)
 
-  const divisions = [
-    'AFC East',
-    'AFC North',
-    'AFC South',
-    'AFC West',
-    'NFC East',
-    'NFC North',
-    'NFC South',
-    'NFC West',
-  ]
   const columns = [
     { label: 'image', key: 'imageUrl', type: 'image' },
     { label: 'displayName', key: 'displayName', type: 'string' },
@@ -53,15 +46,37 @@ const TeamsList: FC = () => {
       <Heading variant="floating" alignSelf={'center'}>
         {league?.name}
       </Heading>
-      <SimpleGrid columns={gridColumns} gap={'10px'} w="100%">
-        {teamsOfFour?.map((g, idx) => {
+
+      {conferences && (
+        <SimpleGrid columns={gridColumns} gap={'10px'} w="100%">
+          {Object.keys(conferences).map((c, idx) => {
+            return (
+              <FDVStack key={idx}>
+                <Heading variant="floating" alignSelf={'center'} size={'sm'}>
+                  {c}
+                </Heading>
+                {Object.keys(conferences[c]).map((d, idx) => {
+                  return (
+                    <BackgroundComponent title={d} key={idx}>
+                      <NoHeaderTable
+                        columns={columns}
+                        rows={conferences[c][d]}
+                      />
+                    </BackgroundComponent>
+                  )
+                })}
+              </FDVStack>
+            )
+          })}
+        </SimpleGrid>
+      )}
+      {/* {teamsOfFour?.map((g, idx) => {
           return (
             <BackgroundComponent title={divisions[idx]} key={idx}>
               <NoHeaderTable columns={columns} rows={g} />
             </BackgroundComponent>
           )
-        })}
-      </SimpleGrid>
+        })} */}
     </FDVStack>
   )
 }

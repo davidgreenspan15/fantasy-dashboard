@@ -1,6 +1,7 @@
-import { Flex, Text } from '@chakra-ui/react'
-import { FC, PropsWithChildren } from 'react'
+import { Collapse, Flex, Text, useDisclosure } from '@chakra-ui/react'
+import { FC, PropsWithChildren, ReactElement } from 'react'
 import { backdropFilter } from '../themes/components/Button'
+import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons'
 
 export const hexToRgb = (hex: string, opacity?: number) => {
   // Remove the '#' symbol if it exists.
@@ -18,8 +19,20 @@ export const hexToRgb = (hex: string, opacity?: number) => {
   return `rgb(${r} ${g} ${b} / ${opacity ?? 1})`
 }
 const BackgroundComponent: FC<
-  PropsWithChildren<{ title: string; titleBgColor?: string }>
-> = ({ title, titleBgColor, children }) => {
+  PropsWithChildren<{
+    title: string
+    titleBgColor?: string
+    isCollapsible?: boolean
+    CustomTitleComponent?: () => ReactElement<any, any>
+  }>
+> = ({
+  title,
+  titleBgColor,
+  isCollapsible,
+  CustomTitleComponent,
+  children,
+}) => {
+  const { isOpen, onToggle } = useDisclosure()
   return (
     <Flex
       w="100%"
@@ -29,28 +42,59 @@ const BackgroundComponent: FC<
       overflow={'hidden'}
     >
       <Flex
-        backgroundColor={'greyBackground'}
+        backgroundColor={'accentColor'}
         backdropFilter={backdropFilter}
         w="100%"
-        flexDirection={'column'}
         alignItems={'center'}
+        onClick={isCollapsible ? onToggle : undefined}
       >
-        <Text
-          backgroundColor={titleBgColor ? hexToRgb(titleBgColor, 0.5) : 'unset'}
-          // borderBottom={'1px solid'}
-          // borderColor={hexToRgb(titleBgColor ?? '#ffffff', 0.5)}
-          fontSize="12px"
-          w="100%"
-          letterSpacing="wider"
-          textTransform="uppercase"
-          textAlign={'center'}
-          lineHeight={4}
-          p={2}
-        >
-          {title}
-        </Text>
+        {CustomTitleComponent ? (
+          CustomTitleComponent()
+        ) : (
+          <Text
+            backgroundColor={
+              titleBgColor ? hexToRgb(titleBgColor, 0.5) : 'unset'
+            }
+            // borderBottom={'1px solid'}
+            // borderColor={hexToRgb(titleBgColor ?? '#ffffff', 0.5)}
+            fontSize="12px"
+            w="100%"
+            letterSpacing="wider"
+            textTransform="uppercase"
+            textAlign={'center'}
+            lineHeight={4}
+            p={2}
+            flexGrow={1}
+          >
+            {title}
+          </Text>
+        )}
+
+        {isCollapsible ? (
+          <Text
+            fontSize="12px"
+            w="fit-content"
+            letterSpacing="wider"
+            textTransform="uppercase"
+            textAlign={'center'}
+            lineHeight={4}
+            p={2}
+          >
+            {isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
+          </Text>
+        ) : null}
       </Flex>
-      {children}
+      {isCollapsible ? (
+        <Collapse
+          in={isOpen}
+          animateOpacity
+          style={{ width: '100%', display: 'flex' }}
+        >
+          {children}
+        </Collapse>
+      ) : (
+        children
+      )}
     </Flex>
   )
 }

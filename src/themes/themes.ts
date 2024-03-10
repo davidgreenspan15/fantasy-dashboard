@@ -9,15 +9,14 @@ import { Link } from './components/Link'
 
 export const minWidth = `(min-width: 770px)`
 
+const accentColor = '#4a90e2'
 const glassBackground = 'rgba(255, 255, 255, 0.16)'
 const hoverGlassBackground = 'rgba(20, 16, 16, 0.16)'
 const greyText = 'rgba(255, 255, 255, 0.5)'
 const greyBackground = 'rgba(170, 170, 170, .55)'
 export const theme = extendTheme({
   colors: {
-    primaryColor: '#000000',
-    secondaryColor: '#A0AEC0',
-    accentColor: '#2C5282',
+    accentColor,
     glassBackground,
     hoverGlassBackground,
     greyText,

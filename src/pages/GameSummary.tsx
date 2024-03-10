@@ -181,11 +181,21 @@ const StatisticsTable: FC<{
       Object.keys(s).forEach((k) => {
         if (k === 'athleteId') return
         if (!acc[k]) {
+          // if (k === 'displayName') {
+          //   acc[k] = {
+          //     label: k,
+          //     key: k,
+          //     type: 'string',
+          //     imageSrc: 'imageUrl',
+          //     minWidth: '50px',
+          //   }
+          // }
           if (k === 'imageUrl') {
             acc[k] = {
               label: k,
               key: k,
               type: 'image',
+              minWidth: '50px',
             }
           } else {
             acc[k] = {

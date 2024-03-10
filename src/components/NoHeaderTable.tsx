@@ -1,4 +1,5 @@
 import {
+  Flex,
   Image,
   Link,
   Table,
@@ -10,7 +11,7 @@ import {
   Thead,
   Tr,
 } from '@chakra-ui/react'
-import { capitalize } from 'lodash'
+import _, { capitalize } from 'lodash'
 import moment from 'moment-timezone'
 import { FC } from 'react'
 import { Link as RRLink } from 'react-router-dom'
@@ -20,7 +21,10 @@ export interface Column {
   key: string
   type: string
   path?: (keys: string) => string
+  pathKey?: string
   minWidth?: string
+  dateFormat?: string
+  imageSrc?: string
 }
 
 const NoHeaderTable: FC<{
@@ -51,7 +55,7 @@ const NoHeaderTable: FC<{
                     return (
                       <Td key={i}>
                         <Image
-                          src={r[c.key]}
+                          src={_.get(r, c.key)}
                           height={'40px'}
                           w="auto"
                           minW={c.minWidth ?? '40px'}
@@ -60,7 +64,7 @@ const NoHeaderTable: FC<{
                     )
                   }
                   if (c.type === 'link' && c.path) {
-                    const to = c.path(r[c.key])
+                    const to = c.path(_.get(r, c.key))
                     return (
                       <Td key={i}>
                         <Link as={RRLink} to={to.toLowerCase()}>
@@ -73,14 +77,41 @@ const NoHeaderTable: FC<{
                     return (
                       <Td key={i} textAlign={'start'}>
                         <Text>
-                          {moment(r[c.key]).format('MMM DD YYYY hh:mm A')}
+                          {moment(_.get(r, c.key)).format(
+                            c.dateFormat ?? 'MMM DD YYYY hh:mm A'
+                          )}
                         </Text>
                       </Td>
                     )
                   }
                   return (
                     <Td key={i} textAlign={'start'}>
-                      <Text>{r[c.key]}</Text>
+                      <Flex alignItems={'center'}>
+                        {c.imageSrc && _.get(r, c.imageSrc) ? (
+                          <Image
+                            src={_.get(r, c.imageSrc)}
+                            height={'40px'}
+                            w="auto"
+                            minW={c.minWidth ?? '40px'}
+                          />
+                        ) : null}
+                        <Text
+                          as={c.path ? RRLink : Text}
+                          _hover={
+                            c.path ? { textDecoration: 'underline' } : undefined
+                          }
+                          // @ts-ignore
+                          to={
+                            c.path
+                              ? c
+                                  .path(_.get(r, c.pathKey ?? c.key))
+                                  .toLowerCase()
+                              : undefined
+                          }
+                        >
+                          {_.get(r, c.key)}
+                        </Text>
+                      </Flex>
                     </Td>
                   )
                 })}

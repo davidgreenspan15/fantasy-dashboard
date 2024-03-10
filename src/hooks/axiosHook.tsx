@@ -23,24 +23,28 @@ const useAxios: <T>(req: AxiosRequest) => useAxiosResults<T> = ({
   const [data, setData] = useState<unknown>(undefined)
   const [error, setError] = useState<AxiosError>()
   const baseUrl = 'http://localhost:8000/'
-  const call = useCallback(async (url: string, method: Method, data: any) => {
-    setLoading(true)
-    try {
-      const response = await axios(baseUrl + url, { method, data })
-      setData(response.data)
-      return response
-    } catch (err) {
-      setError(err as AxiosError)
-      throw err
-    } finally {
-      setLoading(false)
-    }
-  }, [])
+  const call = useCallback(
+    async (url: string, method: Method, data: any, params?: any) => {
+      setLoading(true)
+      try {
+        const payload = method === 'get' ? { params } : { data }
+        const response = await axios(baseUrl + url, { method, ...payload })
+        setData(response.data)
+        return response
+      } catch (err) {
+        setError(err as AxiosError)
+        throw err
+      } finally {
+        setLoading(false)
+      }
+    },
+    []
+  )
   useEffect(() => {
     if (!path || !method || lazy || loading || skip || data || error) {
       return
     }
-    call(path, method, params).catch(() => void 0)
+    call(path, method, params, params).catch(() => void 0)
   }, [data, call, lazy, loading, method, params, skip, path, error])
   const x = [{ loading, data, error }, call]
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

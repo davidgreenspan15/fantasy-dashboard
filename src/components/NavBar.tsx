@@ -140,7 +140,9 @@ const NavBarButtons: FC<{
                   <Link
                     textAlign={'center'}
                     as={RRLink}
-                    to={`/${currentKey}/${option}`.toLowerCase()}
+                    to={`/${currentKey}/${convertSpacesToDashes(
+                      option
+                    )}`.toLowerCase()}
                     color="black"
                   >
                     {option}
@@ -153,4 +155,8 @@ const NavBarButtons: FC<{
       </Flex>
     </>
   )
+}
+
+const convertSpacesToDashes = (str: string) => {
+  return str.replace(/\s/g, '_')
 }
