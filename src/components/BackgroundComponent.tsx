@@ -40,6 +40,7 @@ const BackgroundComponent: FC<
       alignItems={'center'}
       borderRadius={10}
       overflow={'hidden'}
+      position={'relative'}
     >
       <Flex
         backgroundColor={'accentColor'}
@@ -72,6 +73,7 @@ const BackgroundComponent: FC<
 
         {isCollapsible ? (
           <Text
+            position={'absolute'}
             fontSize="12px"
             w="fit-content"
             letterSpacing="wider"
@@ -79,6 +81,7 @@ const BackgroundComponent: FC<
             textAlign={'center'}
             lineHeight={4}
             p={2}
+            right="10px"
           >
             {isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
           </Text>

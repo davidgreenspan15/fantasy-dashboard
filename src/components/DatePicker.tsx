@@ -94,26 +94,29 @@ const DatePicker: FC<{
 
           const isSelected = date.isSame(day, 'date')
           return (
-            <Text
-              key={day.format('DDMMYYYY')}
-              textAlign="center"
-              backgroundColor={date.isSame(day, 'day') ? 'accentColor' : 'none'}
-              color={isDisabled ? 'greyText' : 'white'}
-              cursor={isDisabled ? 'not-allowed' : 'pointer'}
-              p={2}
-              onClick={isDisabled ? () => null : () => setDate(day)}
-              borderRadius={10}
-              _hover={{
-                backgroundColor: isDisabled
-                  ? 'none'
-                  : isSelected
-                  ? 'activeRed'
-                  : 'hoverGlassBackground',
-                borderRadius: 10,
-              }}
-            >
-              {day.date()}
-            </Text>
+            <Box key={day.format('DDMMYYYY')}>
+              <Text
+                textAlign="center"
+                backgroundColor={
+                  date.isSame(day, 'day') ? 'accentColor' : 'none'
+                }
+                color={isDisabled ? 'greyText' : 'white'}
+                cursor={isDisabled ? 'not-allowed' : 'pointer'}
+                p={2}
+                onClick={isDisabled ? () => null : () => setDate(day)}
+                borderRadius={10}
+                _hover={{
+                  backgroundColor: isDisabled
+                    ? 'none'
+                    : isSelected
+                    ? 'activeRed'
+                    : 'hoverGlassBackground',
+                  borderRadius: 10,
+                }}
+              >
+                {day.date()}
+              </Text>
+            </Box>
           )
         })}
       </Grid>

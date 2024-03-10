@@ -87,9 +87,12 @@ const TodaysBirthdays: FC = () => {
       <Heading variant="floating" alignSelf={'center'}>
         Todays Birthdays
       </Heading>
-      <BackgroundComponent title={date.format('MM/DD')} isCollapsible>
-        <DatePicker date={date} setDate={setDate} displayYear={false} />
-      </BackgroundComponent>
+      <Flex maxW="500px" justifyContent="center">
+        <BackgroundComponent title={date.format('MM/DD')} isCollapsible>
+          <DatePicker date={date} setDate={setDate} displayYear={false} />
+        </BackgroundComponent>
+      </Flex>
+
       {Object.keys(tables ?? {}).map((league, idx) => {
         return (
           <BackgroundComponent title={league} key={idx}>
