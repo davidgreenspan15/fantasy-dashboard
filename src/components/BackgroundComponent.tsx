@@ -23,6 +23,7 @@ const BackgroundComponent: FC<
     title: string
     titleBgColor?: string
     isCollapsible?: boolean
+    defaultIsOpen?: boolean
     CustomTitleComponent?: FC
   }>
 > = ({
@@ -30,9 +31,10 @@ const BackgroundComponent: FC<
   titleBgColor,
   isCollapsible,
   CustomTitleComponent,
+  defaultIsOpen,
   children,
 }) => {
-  const { isOpen, onToggle } = useDisclosure()
+  const { isOpen, onToggle } = useDisclosure({ defaultIsOpen: defaultIsOpen })
   return (
     <Flex
       w="100%"

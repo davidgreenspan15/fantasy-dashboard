@@ -1,20 +1,23 @@
 import {
   Flex,
-  Grid,
   GridItem,
   Heading,
   SimpleGrid,
+  Spinner,
   Text,
   useMediaQuery,
 } from '@chakra-ui/react'
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 
 import BackgroundComponent from '../components/BackgroundComponent'
 import FDVStack from '../components/CustomChakraComponents/FDVStack'
 import LoadingModal from '../components/LoadingModal'
 import NoHeaderTable from '../components/NoHeaderTable'
 import useAxios from '../hooks/axiosHook'
-import { TodaysBirthdaysResponse } from '../types/espnApiV2'
+import {
+  SeasonBirthdayStatsResponse,
+  TodaysBirthdaysResponse,
+} from '../types/espnApiV2'
 import useModal from '../util/useModal'
 import DatePicker from './DatePicker'
 import moment, { Moment } from 'moment-timezone'
@@ -24,7 +27,6 @@ import ProgressBar from './ProgressBar'
 
 const TodaysBirthdays: FC = () => {
   const isDesktop = useMediaQuery(minWidth)[0]
-  const ref = useRef<HTMLDivElement>(null)
 
   const [date, setDate] = useState<Moment>(moment())
   const {
@@ -137,118 +139,12 @@ const TodaysBirthdays: FC = () => {
         >
           <DatePicker date={date} setDate={setDate} displayYear={false} />
         </BackgroundComponent>
-        <BackgroundComponent title={'2023 Regular Season Stats'}>
-          <Flex
-            backgroundColor={'greyBackground'}
-            p="5"
-            w="100%"
-            alignItems={'center'}
-            flexDirection={'column'}
-          >
-            <Flex w="100%" gap={'10px'}>
-              <Flex gap={'4px'} alignItems={'center'}>
-                <Text size="sm" minW="max-content">
-                  Wide Receivers
-                </Text>
-                <Text size="xs" fontWeight={400} minW="max-content">
-                  (Tds / Gms)
-                </Text>
-              </Flex>
-              <Flex
-                gap="10px"
-                w="100%"
-                alignItems={'center'}
-                justifyContent={'flex-end'}
-              >
-                <Flex ref={ref} w="100%">
-                  <ProgressBar
-                    progress={90}
-                    backgroundColor={'gray.700'}
-                    fillColor="linear-gradient(110deg, accentColor 80%, accentColorTwo 90%)"
-                  />
-                </Flex>
-                <Flex gap={'4px'} alignItems={'center'}>
-                  <Text size="sm" minW="max-content">
-                    90%
-                  </Text>
-                  <Text size="xs" fontWeight={400} minW="max-content">
-                    (9 / 10)
-                  </Text>
-                </Flex>
-              </Flex>
-            </Flex>
-            <Flex w="100%" gap={'10px'}>
-              <Flex gap={'4px'} alignItems={'center'}>
-                <Text size="sm" minW="max-content">
-                  Running Backs
-                </Text>
-                <Text size="xs" fontWeight={400} minW="max-content">
-                  (Tds / Gms)
-                </Text>
-              </Flex>
-              <Flex
-                gap="10px"
-                w="100%"
-                alignItems={'center'}
-                justifyContent={'flex-end'}
-              >
-                <Flex
-                  maxW={ref.current?.offsetWidth}
-                  w={ref.current?.offsetWidth}
-                >
-                  <ProgressBar
-                    progress={90}
-                    backgroundColor={'gray.700'}
-                    fillColor="linear-gradient(110deg, accentColor 80%, accentColorTwo 90%)"
-                  />
-                </Flex>
-
-                <Flex gap={'4px'} alignItems={'center'}>
-                  <Text size="sm" minW="max-content">
-                    90%
-                  </Text>
-                  <Text size="xs" fontWeight={400} minW="fit-content">
-                    (9 / 10)
-                  </Text>
-                </Flex>
-              </Flex>
-            </Flex>
-            <Flex w="100%" gap={'10px'}>
-              <Flex gap={'4px'} alignItems={'center'}>
-                <Text size="sm" minW="max-content">
-                  Tight Ends
-                </Text>
-                <Text size="xs" fontWeight={400} minW="max-content">
-                  (Tds / Gms)
-                </Text>
-              </Flex>
-              <Flex
-                gap="10px"
-                w="100%"
-                alignItems={'center'}
-                justifyContent={'flex-end'}
-              >
-                <Flex
-                  maxW={ref.current?.offsetWidth}
-                  w={ref.current?.offsetWidth}
-                >
-                  <ProgressBar
-                    progress={90}
-                    backgroundColor={'gray.700'}
-                    fillColor="linear-gradient(110deg, accentColor 80%, accentColorTwo 90%)"
-                  />
-                </Flex>
-                <Flex gap={'4px'} alignItems={'center'}>
-                  <Text size="sm" minW="max-content">
-                    90%
-                  </Text>
-                  <Text size="xs" fontWeight={400} minW="max-content">
-                    (9 / 10)
-                  </Text>
-                </Flex>
-              </Flex>
-            </Flex>
-          </Flex>
+        <BackgroundComponent
+          title={'2023 Regular Season Stats'}
+          //   isCollapsible
+          defaultIsOpen={true}
+        >
+          <SeasonBirthdayStats />
         </BackgroundComponent>
       </SimpleGrid>
 
@@ -268,3 +164,69 @@ const TodaysBirthdays: FC = () => {
 }
 
 export default TodaysBirthdays
+
+export const SeasonBirthdayStats: FC = () => {
+  const isDesktop = useMediaQuery(minWidth)[0]
+  const [{ data, loading, error }] =
+    useAxios<SeasonBirthdayStatsResponse.SeasonBirthdayStats>({
+      path: 'getSeasonBirthdayStats',
+      method: 'get',
+      skip: false,
+    })
+
+  if (error) {
+    console.error(error)
+  }
+
+  return (
+    <Flex
+      backgroundColor={'greyBackground'}
+      p="5"
+      w="100%"
+      alignItems={'center'}
+      flexDirection={'column'}
+    >
+      {loading ? <Spinner /> : null}
+      {data &&
+        Object.keys(data).map((s, idx) => {
+          const value: SeasonBirthdayStatsResponse.Stats = data[s]
+          const progress = (value.touchdowns / value.games) * 100
+          return (
+            <SimpleGrid w="100%" columns={2} key={idx}>
+              <Flex gap={'4px'} alignItems={'center'}>
+                <Text size="sm" minW="max-content">
+                  {s}
+                </Text>
+                <Text size="xs" fontWeight={400} minW="max-content">
+                  (Tds / Gms)
+                </Text>
+              </Flex>
+              <SimpleGrid
+                gap={isDesktop ? '10px' : '30px'}
+                w="100%"
+                columns={3}
+                justifyItems={'end'}
+                alignItems={'center'}
+              >
+                <Flex w={isDesktop ? '120%' : '100%'} as={GridItem} colSpan={2}>
+                  <ProgressBar
+                    progress={progress}
+                    backgroundColor={'gray.700'}
+                    fillColor="linear-gradient(110deg, accentColor 80%, accentColorTwo 90%)"
+                  />
+                </Flex>
+                <Flex gap={'4px'} alignItems={'center'}>
+                  <Text size="sm" minW="max-content">
+                    {progress}%
+                  </Text>
+                  <Text size="xs" fontWeight={400} minW="max-content">
+                    {`(${value.touchdowns} / ${value.games})`}
+                  </Text>
+                </Flex>
+              </SimpleGrid>
+            </SimpleGrid>
+          )
+        })}
+    </Flex>
+  )
+}

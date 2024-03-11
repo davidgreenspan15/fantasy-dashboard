@@ -347,3 +347,16 @@ export namespace TodaysBirthdaysResponse {
     abbreviation: string
   }
 }
+
+export namespace SeasonBirthdayStatsResponse {
+  export interface SeasonBirthdayStats {
+    'Wide Receiver': Stats
+    'Tight End': Stats
+    'Running Back': Stats
+  }
+
+  export interface Stats {
+    touchdowns: number
+    games: number
+  }
+}
