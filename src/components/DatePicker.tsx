@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import moment, { Moment } from 'moment-timezone'
-import { Flex, Select, Grid, Text, Box } from '@chakra-ui/react'
+import { Flex, Select, Grid, Text, Box, SimpleGrid } from '@chakra-ui/react'
 import { backdropFilter } from '../themes/components/Button'
 
 const DatePicker: FC<{
@@ -33,7 +33,7 @@ const DatePicker: FC<{
       backgroundColor={'greyBackground'}
       backdropFilter={backdropFilter}
     >
-      <Flex justifyContent="center" m={4}>
+      <SimpleGrid columns={displayYear ? 2 : 1} m={4}>
         {displayYear && (
           <Select
             value={date.year()}
@@ -57,6 +57,7 @@ const DatePicker: FC<{
         <Select
           value={date.month()}
           onChange={(e) => setDate(date.clone().month(e.target.value))}
+          variant={'flushed'}
         >
           {months.map((month, idx) => (
             <option key={month} value={idx}>
@@ -64,7 +65,7 @@ const DatePicker: FC<{
             </option>
           ))}
         </Select>
-      </Flex>
+      </SimpleGrid>
       <Grid templateColumns="repeat(7, 1fr)" gap={1}>
         {moment.weekdaysShort().map((day) => (
           <Text key={day} textAlign="center">

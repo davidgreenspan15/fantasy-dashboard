@@ -23,7 +23,7 @@ const BackgroundComponent: FC<
     title: string
     titleBgColor?: string
     isCollapsible?: boolean
-    CustomTitleComponent?: () => ReactElement<any, any>
+    CustomTitleComponent?: FC
   }>
 > = ({
   title,
@@ -41,6 +41,7 @@ const BackgroundComponent: FC<
       borderRadius={10}
       overflow={'hidden'}
       position={'relative'}
+      h="fit-content"
     >
       <Flex
         backgroundColor={'accentColor'}
@@ -50,7 +51,7 @@ const BackgroundComponent: FC<
         onClick={isCollapsible ? onToggle : undefined}
       >
         {CustomTitleComponent ? (
-          CustomTitleComponent()
+          <CustomTitleComponent />
         ) : (
           <Text
             backgroundColor={

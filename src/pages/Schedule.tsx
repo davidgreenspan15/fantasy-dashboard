@@ -59,7 +59,11 @@ const GamesPage: FC = () => {
     // Break up tables between in progress, previous, and upcoming
     const date = new Date(game.date)
     const now = new Date()
-    const key = date < now ? 'Previous' : date > now ? 'Upcoming' : 'InProgress'
+    const key = game.isComplete
+      ? 'Previous'
+      : date < now
+      ? 'In Progress'
+      : 'Upcoming'
     if (!acc[key]) {
       acc[key] = [game]
     } else {
@@ -91,32 +95,55 @@ const GamesPage: FC = () => {
         page="schedule"
       />
       {tables
-        ? Object.keys(tables).map((key, idx) => {
-            return (
-              <BackgroundComponent
-                key={idx}
-                title={key}
-                titleBgColor={team?.color}
-              >
-                <NoHeaderTable
-                  showColumnHeaders={true}
-                  columns={[
-                    { label: 'date', key: 'date', type: 'date' },
-                    { label: 'name', key: 'name', type: 'string' },
-                    {
-                      label: 'Box Score',
-                      key: 'id',
-                      type: 'link',
-                      path: (key: string) => {
-                        return `../../../scoreboard/${key}`
+        ? Object.keys(tables)
+            .sort((a, b) => {
+              // sort so the order is In Progress, Upcoming, Previous
+              if (a === 'In Progress') {
+                return -1
+              }
+              if (b === 'In Progress') {
+                return 1
+              }
+              if (a === 'Upcoming') {
+                return -1
+              }
+              if (b === 'Upcoming') {
+                return 1
+              }
+              if (a === 'Previous') {
+                return 1
+              }
+              if (b === 'Previous') {
+                return -1
+              }
+              return 0
+            })
+            .map((key, idx) => {
+              return (
+                <BackgroundComponent
+                  key={idx}
+                  title={key}
+                  titleBgColor={team?.color}
+                >
+                  <NoHeaderTable
+                    showColumnHeaders={true}
+                    columns={[
+                      { label: 'date', key: 'date', type: 'date' },
+                      { label: 'name', key: 'name', type: 'string' },
+                      {
+                        label: 'Box Score',
+                        key: 'id',
+                        type: 'link',
+                        path: (key: string) => {
+                          return `../../../scoreboard/${key}`
+                        },
                       },
-                    },
-                  ]}
-                  rows={tables[key]}
-                />
-              </BackgroundComponent>
-            )
-          })
+                    ]}
+                    rows={tables[key]}
+                  />
+                </BackgroundComponent>
+              )
+            })
         : null}
     </FDVStack>
   )
