@@ -86,6 +86,11 @@ const router = createBrowserRouter([
             errorElement: <ErrorPage />,
             element: <TodaysBirthdays />,
           },
+          {
+            path: 'sql_editor',
+            errorElement: <ErrorPage />,
+            element: <SQLTool />,
+          },
         ],
       },
 
@@ -100,11 +105,6 @@ const router = createBrowserRouter([
         element: <GamesPage />,
       },
 
-      {
-        path: 'sql-tool',
-        errorElement: <ErrorPage />,
-        element: <SQLTool />,
-      },
       // {
       //   path: 'rosters',
       //   children: [

@@ -1,6 +1,5 @@
 import {
   Flex,
-  GridItem,
   Heading,
   SimpleGrid,
   Spinner,
@@ -178,6 +177,27 @@ export const SeasonBirthdayStats: FC = () => {
     console.error(error)
   }
 
+  const rows = data
+    ? Object.keys(data).map((s, idx) => {
+        return { title: s, stats: data[s], group: data[s].goals ? 1 : 0 } as {
+          title: string
+          stats: SeasonBirthdayStatsResponse.Stats
+          group: number
+        }
+      })
+    : []
+
+  const sortRowsByGroup = (
+    rows: {
+      title: string
+      stats: SeasonBirthdayStatsResponse.Stats
+      group: number
+    }[]
+  ) => {
+    return rows.sort((a, b) => {
+      return a.group - b.group
+    })
+  }
   return (
     <Flex
       backgroundColor={'greyBackground'}
@@ -187,46 +207,50 @@ export const SeasonBirthdayStats: FC = () => {
       flexDirection={'column'}
     >
       {loading ? <Spinner /> : null}
-      {data &&
-        Object.keys(data).map((s, idx) => {
-          const value: SeasonBirthdayStatsResponse.Stats = data[s]
-          const progress = (value.touchdowns / value.games) * 100
-          return (
-            <SimpleGrid w="100%" columns={2} key={idx}>
-              <Flex gap={'4px'} alignItems={'center'}>
-                <Text size="sm" minW="max-content">
-                  {s}
+      {sortRowsByGroup(rows).map((r, idx) => {
+        const value = r.stats
+        const progress = Math.round(
+          ((value.goals ?? value.touchdowns) / value.games) * 100
+        )
+        const vegasOdds = Math.round((100 / progress) * 100)
+        return (
+          <SimpleGrid w="100%" columns={3} key={idx}>
+            <Flex
+              gap={'4px'}
+              alignItems={'center'}
+              justifyContent={'flex-start'}
+            >
+              <Text size="sm" minW="max-content">
+                {r.title}
+              </Text>
+              <Text size="xs" fontWeight={400} minW="max-content">
+                ({value.goals ? 'Gls' : 'Tds'} / Gms)
+              </Text>
+            </Flex>
+
+            <Flex w={isDesktop ? '80%' : '70%'} ml="40px" alignItems={'center'}>
+              <ProgressBar
+                progress={progress}
+                backgroundColor={'gray.700'}
+                fillColor="linear-gradient(110deg, accentColor 80%, accentColorTwo 90%)"
+              />
+            </Flex>
+            <SimpleGrid columns={3} justifyItems={'end'}>
+              <Text size="sm" minW="fit-content">
+                {progress}%
+              </Text>
+              <Text size="xs" fontWeight={400} minW="fit-content">
+                {`(${value.goals ?? value.touchdowns} / ${value.games})`}
+              </Text>
+              {progress !== 0 && (
+                <Text size="xs" fontWeight={400} minW="fit-content">
+                  {`+${vegasOdds}`}
                 </Text>
-                <Text size="xs" fontWeight={400} minW="max-content">
-                  (Tds / Gms)
-                </Text>
-              </Flex>
-              <SimpleGrid
-                gap={isDesktop ? '10px' : '30px'}
-                w="100%"
-                columns={3}
-                justifyItems={'end'}
-                alignItems={'center'}
-              >
-                <Flex w={isDesktop ? '120%' : '100%'} as={GridItem} colSpan={2}>
-                  <ProgressBar
-                    progress={progress}
-                    backgroundColor={'gray.700'}
-                    fillColor="linear-gradient(110deg, accentColor 80%, accentColorTwo 90%)"
-                  />
-                </Flex>
-                <Flex gap={'4px'} alignItems={'center'}>
-                  <Text size="sm" minW="max-content">
-                    {progress}%
-                  </Text>
-                  <Text size="xs" fontWeight={400} minW="max-content">
-                    {`(${value.touchdowns} / ${value.games})`}
-                  </Text>
-                </Flex>
-              </SimpleGrid>
+              )}
             </SimpleGrid>
-          )
-        })}
+          </SimpleGrid>
+        )
+      })}
     </Flex>
   )
 }

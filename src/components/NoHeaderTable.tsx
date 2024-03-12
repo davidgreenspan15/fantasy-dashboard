@@ -1,3 +1,4 @@
+import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons'
 import {
   Flex,
   Image,
@@ -32,6 +33,12 @@ const NoHeaderTable: FC<{
   rows: any[]
   showColumnHeaders?: boolean
 }> = ({ columns, rows, showColumnHeaders }) => {
+  // const [page, setPage] = useState(1)
+  // const isDesktop = useMediaQuery(minWidth)[0]
+  // const paginatedRows = useMemo(() => {
+  //   return rows.slice((page - 1) * 50, page * 50)
+  // }, [page, rows])
+
   return (
     <TableContainer w="100%">
       <Table variant={'noHeader'}>
@@ -119,12 +126,39 @@ const NoHeaderTable: FC<{
             )
           })}
         </Tbody>
+
+        {/* <Tfoot>
+          <Tr position="relative">
+            <Th colSpan={isDesktop ? 3 : 1} textAlign={'start'}></Th>
+            <Th colSpan={1} textAlign={'start'}>
+              <PagePicker rows={paginatedRows} page={page} setPage={setPage} />
+            </Th>
+            <Th colSpan={1} textAlign={'start'}>
+              {paginatedRows.length ?? 0} rows
+            </Th>
+          </Tr>
+        </Tfoot> */}
       </Table>
     </TableContainer>
   )
 }
 
 export default NoHeaderTable
+
+const PagePicker: FC<{
+  rows: any[]
+  page: number
+  setPage: (page: number) => void
+}> = ({ rows, page, setPage }) => {
+  const pages = Math.ceil(rows.length / 50)
+  return (
+    <Flex>
+      {page > 1 && <ChevronLeftIcon onClick={() => setPage(page - 1)} />}
+      <Text>{page}</Text>
+      {page === pages && <ChevronRightIcon onClick={() => setPage(page + 1)} />}
+    </Flex>
+  )
+}
 
 // const TableHeaderComponent: FC<{
 //   columns: Column[]

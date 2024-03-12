@@ -358,5 +358,6 @@ export namespace SeasonBirthdayStatsResponse {
   export interface Stats {
     touchdowns: number
     games: number
+    goals?: number
   }
 }
